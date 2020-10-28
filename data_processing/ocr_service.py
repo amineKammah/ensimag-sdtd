@@ -3,7 +3,7 @@ import os
 from pyspark import SparkContext
 
 if __name__ == "__main__":
-    test_data_path = "ensimag-sdtd/test_data/how_to_win_argments/"
+    test_data_path = "/ensimag-sdtd/test_data/how_to_win_argments/"
 
     images = []
     for image_name in os.listdir(test_data_path):
@@ -11,7 +11,7 @@ if __name__ == "__main__":
         images.append(image_path)
 
     sc = SparkContext("local", "first app")
-    sc.addPyFile('ensimag-sdtd/data_processing/optical_character_recognizer.py')
+    sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
     from optical_character_recognizer import OpticalCharacterRecognizer
 
     print(sc.parallelize(images).map(lambda image: OpticalCharacterRecognizer.extract(image)).collect())
