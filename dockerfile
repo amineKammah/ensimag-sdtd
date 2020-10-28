@@ -30,7 +30,7 @@ RUN apt-get update && \
     apt install -y python3 python3-pip && \
     ln -s /usr/bin/python3 /usr/bin/python && \
     ln -s /usr/bin/pip3 /usr/bin/pip && \
-    apt install -y tesseract-ocr libtesseract-dev && \
+    apt install -y tesseract-ocr libtesseract-dev git && \
     # We remove ensurepip since it adds no functionality since pip is
     # installed on the image and it just takes up 1.6MB on the image
 #     rm -r /usr/lib/python*/ensurepip && \
@@ -40,7 +40,7 @@ RUN apt-get update && \
     # Removed the .cache to save space
     rm -r /root/.cache && rm -rf /var/cache/apt/*
 
-COPY . .
+RUN git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git /ensimag-sdtd
 
 COPY python/pyspark ${SPARK_HOME}/python/pyspark
 COPY python/lib ${SPARK_HOME}/python/lib

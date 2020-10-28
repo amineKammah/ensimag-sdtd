@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ocr-service13
+  name: ocr-service
 spec:
   template:
     # This is the pod template
@@ -9,5 +9,5 @@ spec:
       containers:
         - name: my-spark-application
           image: "kammahm/spark-py:latest"
-          command: ['python3', '/data_processing/ocr_service.py']
+          command: ['cat', '/ensimag-sdtd/data_processing/ocr_service.py']
       restartPolicy: Never
