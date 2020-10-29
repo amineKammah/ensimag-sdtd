@@ -64,11 +64,10 @@ bin/spark-submit \
 ./bin/spark-submit \
     --master k8s://https://172.31.45.129:6443\
     --deploy-mode cluster \
-    --name spark-pi \
+    --name spark-py \
     --conf spark.executor.instances=1 \
     --conf spark.kubernetes.container.image=kammahm/spark-py \
     local:///ensimag-sdtd/data_processing/ocr_service.py
-
 
 
 #    --class org.apache.spark.examples.SparkPi \
