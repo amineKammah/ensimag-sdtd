@@ -9,5 +9,5 @@ spec:
       containers:
         - name: my-spark-application
           image: "kammahm/spark-py:latest"
-          command: ['cat', '/ensimag-sdtd/data_processing/ocr_service.py']
+          command: ['python3', '/ensimag-sdtd/data_processing/ocr_service.py']
       restartPolicy: Never
