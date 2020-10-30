@@ -22,5 +22,4 @@
            image: "wurstmeister/kafka"
            name: zk1
            ports:
-             -
-               containerPort: 2181
+             - containerPort: 2181
