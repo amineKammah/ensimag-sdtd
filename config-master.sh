@@ -34,7 +34,7 @@ echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt
 sudo apt-get update
 sudo apt-get install helm
 helm repo add incubator http://storage.googleapis.com/kubernetes-charts-incubator
-helm install incubator/sparkoperator --generate-name --namespace spark-operator --set sparkJobNamespace=default
+helm install incubator/sparkoperator --generate-name --namespace spark-operator --set sparkJobNamespace/=default
 
 kubeadm init
 hostnamectl set-hostname master-node
@@ -78,3 +78,72 @@ kubeadm join 172.31.68.154:6443 --token dtwjjm.p9rpkx5oevln8kll \
 
 
 kubeadm init --apiserver-advertise-address=18.207.130.136 --pod-network-cidr=192.168.0.0/16  --ignore-preflight-errors=all
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------
+---
+apiServer:
+  extraArgs:
+    cloud-provider: aws
+apiServerCertSANs:
+- cp.theithollowlab.com
+apiServerExtraArgs:
+  endpoint-reconciler-type: lease
+apiVersion: kubeadm.k8s.io/v1beta1
+clusterName: sdtd #your cluster name
+controllerManager:
+  extraArgs:
+    cloud-provider: aws
+    configure-cloud-routes: 'false'
+kind: ClusterConfiguration
+kubernetesVersion: 1.19.3 #your desired k8s version
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.0.0.0/24 #your pod subnet matching your CNI config
+nodeRegistration:
+  kubeletExtraArgs:
+    cloud-provider: aws
+
+swapoff -a
+sed -i.bak -r 's/(.+ swap .+)/#\1/' /etc/fstab
+
+sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https curl
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+cat <<EOF | sudo tee /etc/apt/sources.list.d/kubernetes.list
+deb https://apt.kubernetes.io/ kubernetes-xenial main
+EOF
+sudo apt-get update
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+apt-get install kubeadm kubelet kubectl
+apt-mark hold kubeadm kubelet kubectl
+
+
+sudo apt install docker.io -y
+
+cat > /etc/docker/daemon.json &lt;&lt;EOF
+{
+  "exec-opts": ["native.cgroupdriver=systemd"],
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "100m"
+  },
+  "storage-driver": "overlay2"
+}
+EOF
+
+sudo systemctl restart docker
+sudo systemctl enable docker
