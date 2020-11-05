@@ -6,10 +6,10 @@ from data_processing.optical_character_recognizer import OpticalCharacterRecogni
 
 
 class OCRService:
-    def __init__(self, kafka_server: str, kafka_topic: str, distribution_threshold: int = 50):
+    def __init__(self, kafka_server: str, consumer_topic: str, producer_topic: str, distribution_threshold: int = 30):
         self.distribution_threshold = distribution_threshold
         self.kafka_agent = KafkaAgent(kafka_server)
-        self.kafka_topic = kafka_topic
+        self.consumer_topic = consumer_topic
 
 
     @staticmethod
@@ -27,16 +27,22 @@ class OCRService:
     def start(self) -> None:
 
         # TODO: Add exception handling
-        for batch in self.kafka_agent.batch_consumer(self.kafka_topic):
+        for batch in self.kafka_agent.batch_consumer(self.consumer_topic):
+
             images = self._prep_batch(batch)
+            if images:
+                if len(batch) > self.distribution_threshold:
+                    extracted_text = self._distributed_extract(images)
+                else:
+                    extracted_text = self._parallelized_extract(images)
 
-            if len(batch) > self.distribution_threshold:
-                extracted_text = self._distributed_extract(images)
-            else:
-                extracted_text = self._parallelized_extract(images)
-
-            print(extracted_text)
+            # Resend using Kafka
+            kafka_agent.produce(self.producer_topic, self._prep_output_batch(extracted_text))
 
     @staticmethod
-    def _prep_batch(batch) -> List:
+    def _prep_input_batch(batch) -> List:
+        return batch
+
+    @staticmethod
+    def _prep_output_batch(batch) -> List:
         return batch

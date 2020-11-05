@@ -19,9 +19,14 @@ class KafkaAgent:
                          replication_factor=1)
         admin.create_topics([topic])
 
-    def batch_consumer(self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator[List]:
+    def consumer(self, kafka_topic: str, timeout_ms: int) -> KafkaConsumer:
         kafka_consumer = KafkaConsumer(bootstrap_servers=self.kafka_server, consumer_timeout_ms=timeout_ms)
         kafka_consumer.subscribe([kafka_topic])
+
+        return kafka_consumer
+
+    def batch_consumer(self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator[List]:
+        kafka_consumer = self.consumer(kafka_topic, timeout_ms)
 
         while True:
             images = [event for _, event in zip(range(batch_size), kafka_consumer)]
