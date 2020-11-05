@@ -35,7 +35,7 @@ class KafkaAgent:
     def produce(self, kafka_topic: str, data: List) -> None:
 
         for value in data:
-            self.kafka_producer.send(kafka_topic, value=bytes(value))
+            self.kafka_producer.send(kafka_topic, value=bytes(value, "utf-8"))
 
     def random_producer(self, kafka_topic: str, k: int) -> None:
         test_data_path = "test_data/how_to_win_argments/"
