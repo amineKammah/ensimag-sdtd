@@ -33,7 +33,6 @@ class KafkaAgent:
             yield images
 
     def produce(self, kafka_topic: str, data: List) -> None:
-
         for value in data:
             self.kafka_producer.send(kafka_topic, value=bytes(value, "utf-8"))
 

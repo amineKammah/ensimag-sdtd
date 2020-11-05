@@ -1,3 +1,5 @@
+from functools import partial
+
 from pyspark import SparkContext
 
 from messaging_agent.kafka_agent import KafkaAgent
@@ -41,8 +43,8 @@ class OCRService:
 
     @staticmethod
     def _prep_input_batch(batch) -> List:
-        return batch
+        return list(map(lambda value: str(value.value), batch))
 
     @staticmethod
     def _prep_output_batch(batch) -> List:
-        return batch
+        return map(partial(bytes, 'utf-8'), batch)
