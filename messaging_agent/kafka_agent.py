@@ -41,4 +41,5 @@ class KafkaAgent:
         dateset = os.listdir(test_data_path)
 
         images = random.choices(dateset, k=k)
-        self.produce(kafka_topic, images)
+        images_full_path = ["test_data/how_to_win_argments/" + image for image in images]
+        self.produce(kafka_topic, images_full_path)

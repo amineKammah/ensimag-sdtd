@@ -1,4 +1,4 @@
-from functools import partial
+from typing import List
 
 from pyspark import SparkContext
 
@@ -12,6 +12,7 @@ class OCRService:
         self.distribution_threshold = distribution_threshold
         self.kafka_agent = KafkaAgent(kafka_server)
         self.consumer_topic = consumer_topic
+        self.producer_topic = producer_topic
 
 
     @staticmethod
@@ -31,20 +32,19 @@ class OCRService:
         # TODO: Add exception handling
         for batch in self.kafka_agent.batch_consumer(self.consumer_topic):
 
-            images = self._prep_batch(batch)
+            images = self._prep_input_batch(batch)
             if images:
+                print(images)
                 if len(batch) > self.distribution_threshold:
                     extracted_text = self._distributed_extract(images)
                 else:
                     extracted_text = self._parallelized_extract(images)
 
+                print(extracted_text)
+
             # Resend using Kafka
-            kafka_agent.produce(self.producer_topic, self._prep_output_batch(extracted_text))
+                self.kafka_agent.produce(self.producer_topic, extracted_text)
 
     @staticmethod
     def _prep_input_batch(batch) -> List:
-        return list(map(lambda value: str(value.value), batch))
-
-    @staticmethod
-    def _prep_output_batch(batch) -> List:
-        return map(partial(bytes, 'utf-8'), batch)
+        return list(map(lambda value: value.value.decode("utf-8"), batch))
