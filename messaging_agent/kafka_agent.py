@@ -25,7 +25,7 @@ class KafkaAgent:
 
         return kafka_consumer
 
-    def batch_consumer(self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator[List]:
+    def batch_consumer(self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator[List, None, None]:
         kafka_consumer = self.consumer(kafka_topic, timeout_ms)
 
         while True:
