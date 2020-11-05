@@ -6,8 +6,6 @@ from PIL import Image
 import pytesseract
 
 
-
-
 class OpticalCharacterRecognizer:
     """
     Uses Tesseract to extract text from images.
