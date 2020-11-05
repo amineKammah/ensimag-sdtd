@@ -1,3 +1,5 @@
+from typing import Generator
+
 from kafka import KafkaConsumer
 
 
@@ -6,7 +8,7 @@ class Consumer:
         self.kafka_topic = kafka_topic
         self.kafka_server = kafka_server
 
-    def batch_consumer(self, batch_size: int = 100, timeout_ms: int = 1_000) -> None:
+    def batch_consumer(self, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator:
 
         kafka_consumer = KafkaConsumer(bootstrap_servers=self.kafka_server, consumer_timeout_ms=timeout_ms)
         kafka_consumer.subscribe([self.kafka_topic])
