@@ -1,6 +1,8 @@
 from typing import List
 
 from pyspark import SparkContext
+from pyspark.streaming import StreamingContext
+from pyspark.streaming.kafka import KafkaUtils
 
 from messaging_agent.kafka_agent import KafkaAgent
 
@@ -10,6 +12,7 @@ from data_processing.optical_character_recognizer import OpticalCharacterRecogni
 class OCRService:
     def __init__(self, kafka_server: str, consumer_topic: str, producer_topic: str, distribution_threshold: int = 30):
         self.distribution_threshold = distribution_threshold
+        self.kafka_server = kafka_server
         self.kafka_agent = KafkaAgent(kafka_server)
         self.consumer_topic = consumer_topic
         self.producer_topic = producer_topic
@@ -27,23 +30,27 @@ class OCRService:
     def _parallelized_extract(images) -> List:
         return list(map(lambda image: OpticalCharacterRecognizer.extract(image), images))
 
+    @staticmethod
+    def _process_event(event, agent, topic):
+        image = event.value.decode("utf-8")
+        extracted_text = OpticalCharacterRecognizer.extract(image)
+
+        agent.produce(topic, [extracted_text])
+        return extracted_text
+
+
     def start(self) -> None:
+        sc = SparkContext("local", "first app")
+        sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
+        from data_processing.optical_character_recognizer import OpticalCharacterRecognizer
 
-        # TODO: Add exception handling
-        for batch in self.kafka_agent.batch_consumer(self.consumer_topic):
+        ssc = StreamingContext(sc, 2)
+        kvs = KafkaUtils.createStream(ssc, self.kafka_server, "event-consumer", {self.consumer_topic:1})
 
-            images = self._prep_input_batch(batch)
-            if images:
-                print(images)
-                if len(batch) > self.distribution_threshold:
-                    extracted_text = self._distributed_extract(images)
-                else:
-                    extracted_text = self._parallelized_extract(images)
+        kvs.map(lambda event: OCRService._process_event(event, self.kafka_agent, self.producer_topic)).collect()
 
-                print(extracted_text)
-
-            # Resend using Kafka
-                self.kafka_agent.produce(self.producer_topic, extracted_text)
+        ssc.start()
+        ssc.awaitTermination()
 
     @staticmethod
     def _prep_input_batch(batch) -> List:
