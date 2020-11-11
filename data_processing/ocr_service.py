@@ -1,7 +1,7 @@
 from typing import List
 import os
 
-from pyspark import SparkContext
+from pyspark import SparkContext, SparkConf
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
@@ -11,7 +11,11 @@ from data_processing.optical_character_recognizer import OpticalCharacterRecogni
 
 
 class OCRService:
-    def __init__(self, zk_quorums: str, kafka_servers: str, consumer_topic: str, producer_topic: str):
+    def __init__(self, zk_quorums: str, kafka_servers: str, k8s_master: str, consumer_topic: str, producer_topic: str):
+        # os.environ['PYSPARK_SUBMIT_ARGS'] = (
+        #     '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar,/opt/spark/spark-kubernetes_2.12-2.4.4.jar pyspark-shell'
+        # )
+
         os.environ['PYSPARK_SUBMIT_ARGS'] = (
             '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar pyspark-shell'
         )
@@ -20,10 +24,7 @@ class OCRService:
         self.kafka_servers = kafka_servers
         self.consumer_topic = consumer_topic
         self.producer_topic = producer_topic
-
-        kafka_agent = KafkaAgent(kafka_servers)
-        kafka_agent.create_topic(consumer_topic)
-        kafka_agent.create_topic(producer_topic)
+        self.k8s_master = k8s_master
 
     @staticmethod
     def _process_event(event, kafka_servers, topic):
@@ -35,7 +36,13 @@ class OCRService:
         return extracted_text
 
     def start(self) -> None:
-        sc = SparkContext("local[2]", "first app")
+        sparkConf = SparkConf()
+        print(self.k8s_master)
+        sparkConf.setMaster(self.k8s_master)
+        sparkConf.setAppName("OCRService")
+        sparkConf.set("spark.kubernetes.container.image", "kammahm/sdtd_data_processing:latest")
+
+        sc = SparkContext(conf=sparkConf)
         sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
         from data_processing.optical_character_recognizer import OpticalCharacterRecognizer
 
