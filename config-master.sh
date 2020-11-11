@@ -147,3 +147,11 @@ EOF
 
 sudo systemctl restart docker
 sudo systemctl enable docker
+
+cd $SPARK_HOME
+wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.4.4/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar
+import os
+os.environ['PYSPARK_SUBMIT_ARGS'] = '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar pyspark-shell'
+server = ["ab82bf9568a164519a12ee9120fbf7e4-395115395.us-east-1.elb.amazonaws.com:9092", "a7eae1d5eccad4999bc097778a1940a2-955153662.us-east-1.elb.amazonaws.com:9092"]
+server = ["abc2ad6645b794a04bb599321842c98d-2066885158.us-east-1.elb.amazonaws.com:2181", "a54df235ff64c4d4eb993db1f5a77aa7-321826203.us-east-1.elb.amazonaws.com:2181"]
+ln -s /usr/bin/python3 /usr/bin/python
