@@ -3,9 +3,9 @@ from data_processing.ocr_service import OCRService
 from messaging_agent.kafka_agent import KafkaAgent
 
 
-kafka_servers = ['a66bada9889d546fc93b8397608ec0ff-1158322397.us-east-1.elb.amazonaws.com:9092', 'afa4e9850969f4f7c8dba09a6bb42602-1735669284.us-east-1.elb.amazonaws.com:9092']
+kafka_servers = ['a9e0ef99fcead4ebe9122a496422aa6f-378095093.us-east-1.elb.amazonaws.com:9092', 'a43ef7bfc575243f799608504380c04b-1947443702.us-east-1.elb.amazonaws.com:9092']
 
-zoo_servers = ['adc4fe8324e59401ba85a5c3e35b3236-1459396048.us-east-1.elb.amazonaws.com:2181', 'ae1a6723087fa4f80b4058c82206c818-630604259.us-east-1.elb.amazonaws.com:2181']
+zoo_servers = ['a41303edcb4fb4b9a87e57a5cc20a5c1-932356733.us-east-1.elb.amazonaws.com:2181', 'a21296358ce54483dbc8aee84cb6bf37-639466589.us-east-1.elb.amazonaws.com:2181']
 
 k8s_master = 'k8s://https://10.0.0.127:6443'
 

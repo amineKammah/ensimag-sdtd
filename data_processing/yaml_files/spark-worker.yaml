@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - image: kammahm/sdtd_data_processing:latest
-          imagePullPolicy : "IfNotPresent"
+          imagePullPolicy : "Always"
           name: spark-worker
           ports:
           - containerPort: 7078

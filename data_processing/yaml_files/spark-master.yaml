@@ -17,7 +17,7 @@ spec:
       containers:
       - name : spark-master
         image: kammahm/sdtd_data_processing:latest
-        imagePullPolicy: "IfNotPresent"
+        imagePullPolicy: "Always"
         ports:
         - containerPort: 7077
           protocol: TCP

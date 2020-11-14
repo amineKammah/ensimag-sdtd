@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. /start-common.sh
+. /ensimag-sdtd/data_processing/spark_cluster_setup/start_common.sh
 
 echo "$(hostname -i) spark-master" >> /etc/hosts
 
