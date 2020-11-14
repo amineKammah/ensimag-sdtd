@@ -3,9 +3,9 @@ from data_processing.ocr_service import OCRService
 from messaging_agent.kafka_agent import KafkaAgent
 
 
-kafka_servers = ['a04ea17a4263d4e8f9aaecdc8b1b5ed3-1962944993.us-east-1.elb.amazonaws.com:9092', 'ab6dd523e279d4d2bb3a60d1ae32fdee-166896499.us-east-1.elb.amazonaws.com:9092']
+kafka_servers = ['a66bada9889d546fc93b8397608ec0ff-1158322397.us-east-1.elb.amazonaws.com:9092', 'afa4e9850969f4f7c8dba09a6bb42602-1735669284.us-east-1.elb.amazonaws.com:9092']
 
-zoo_servers = ['a0efe17d6231542d1a3b0701d747e315-1175272134.us-east-1.elb.amazonaws.com:2181', 'a112424ef425a4120bdb1866e2e1192d-925634392.us-east-1.elb.amazonaws.com:2181']
+zoo_servers = ['adc4fe8324e59401ba85a5c3e35b3236-1459396048.us-east-1.elb.amazonaws.com:2181', 'ae1a6723087fa4f80b4058c82206c818-630604259.us-east-1.elb.amazonaws.com:2181']
 
 k8s_master = 'k8s://https://10.0.0.127:6443'
 
@@ -21,3 +21,6 @@ def start_service():
 
     OCRService(zoo_servers, kafka_servers, k8s_master, images_feed_topic, text_feed_topic).start()
 
+
+if __name__ == "__main__":
+    start_service()

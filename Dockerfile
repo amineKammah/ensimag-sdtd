@@ -15,7 +15,6 @@
 # limitations under the License.
 #
 
-
 FROM gradiant/spark:2.4.4-python
 WORKDIR /
 
@@ -38,6 +37,6 @@ RUN cd $SPARK_HOME && \
     wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.4.4/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar && \
     ln -s /usr/bin/python3 /usr/bin/python
 
+RUN chmod +x /ensimag-sdtd/data_processing/spark_cluster_setup/*
 
-WORKDIR /
 # ENTRYPOINT [ "/bin/bash" ]

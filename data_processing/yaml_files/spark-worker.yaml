@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: spark-worker
+  name: spark-worker
+spec:
+  selector:
+    matchLabels:
+      name: spark-worker
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: spark-worker
+    spec:
+      containers:
+        - image: kammahm/sdtd_data_processing:latest
+          imagePullPolicy : "IfNotPresent"
+          name: spark-worker
+          ports:
+          - containerPort: 7078
+            protocol: TCP
+          command:
+            - "/bin/bash"
+            - "-c"
+            - "--"
+          args:
+            - '/ensimag-sdtd/data_processing/spark_cluster_setup/start-worker.sh ; sleep infinity'
