@@ -7,12 +7,18 @@ from kafka.admin import NewTopic
 
 
 class KafkaAgent:
-    def __init__(self, kafka_server: str) -> None:
-        self.kafka_server = kafka_server
-        self.kafka_producer = KafkaProducer(bootstrap_servers=self.kafka_server)
+    def __init__(self, kafka_servers: List[str]) -> None:
+        self.kafka_servers = kafka_servers
+        self.kafka_producer = KafkaProducer(bootstrap_servers=self.kafka_servers)
 
-    def create_topic(self, kafka_topic: str):
-        admin = KafkaAdminClient(bootstrap_servers=self.kafka_server)
+    def create_topic(self, kafka_topic: str, error_if_exists: bool = False):
+        if not error_if_exists:
+            existing_topics = KafkaConsumer(bootstrap_servers=self.kafka_servers).topics()
+            if kafka_topic in existing_topics:
+                print(f"Failed to create topic, topic '{kafka_topic}' already exists.")
+                return
+
+        admin = KafkaAdminClient(bootstrap_servers=self.kafka_servers)
 
         topic = NewTopic(name=kafka_topic,
                          num_partitions=1,
@@ -20,7 +26,7 @@ class KafkaAgent:
         admin.create_topics([topic])
 
     def consumer(self, kafka_topic: str, timeout_ms: int) -> KafkaConsumer:
-        kafka_consumer = KafkaConsumer(bootstrap_servers=self.kafka_server, consumer_timeout_ms=timeout_ms)
+        kafka_consumer = KafkaConsumer(bootstrap_servers=self.kafka_servers, consumer_timeout_ms=timeout_ms)
         kafka_consumer.subscribe([kafka_topic])
 
         return kafka_consumer
