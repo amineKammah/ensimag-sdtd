@@ -6,7 +6,6 @@ from messaging_agent.kafka_agent import KafkaAgent
 
 
 def start_service():
-
     kafka_servers = [os.environ.get('KAFKA_SERVER1'), os.environ.get('KAFKA_SERVER2')]
 
     zoo_servers = [os.environ.get('ZK_SERVER1'), os.environ.get('ZK_SERVER2')]

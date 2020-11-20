@@ -12,13 +12,9 @@ from data_processing.optical_character_recognizer import OpticalCharacterRecogni
 
 class OCRService:
     def __init__(self, zk_quorums: List[str], kafka_servers: List[str], k8s_master: str, consumer_topic: str, producer_topic: str):
-#         os.environ['PYSPARK_SUBMIT_ARGS'] = (
-#             '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar,' +
-#             '/opt/spark/spark-kubernetes_2.12-2.4.4.jar pyspark-shell'
-#         )
 
         os.environ['PYSPARK_SUBMIT_ARGS'] = (
-            '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar pyspark-shell'
+            '--jars /opt/spark/sp/opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jarark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar pyspark-shell'
         )
 
         self.zk_quorums = zk_quorums
@@ -38,11 +34,7 @@ class OCRService:
 
     def start(self) -> None:
         sparkConf = SparkConf()
-#         sparkConf.setMaster(self.k8s_master)
         sparkConf.setAppName("OCRService")
-#         sparkConf.set("spark.kubernetes.container.image", "kammahm/sdtd_data_processing:latest")
-#         sparkConf.set("spark.executor.instances", 1)
-#         sparkConf.set("spark.executor.cores", 2)
 
         sc = SparkContext(conf=sparkConf)
         sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
