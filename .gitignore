@@ -1,3 +1,4 @@
 data_processing/__pycache__/
 data_processing/notebooks/.ipynb_checkpoints/
-.idea
+terraform_k8s/full_config/.terraform
+terraform_k8s/IAM_config/.terraform
