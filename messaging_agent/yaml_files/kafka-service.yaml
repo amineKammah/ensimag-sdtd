@@ -3,7 +3,6 @@ kind: Service
 metadata:
   name: kaf1
 spec:
-  type: LoadBalancer
   ports:
     - name: port-9092
       port: 9092
@@ -16,7 +15,6 @@ kind: Service
 metadata:
   name: kaf2
 spec:
-  type: LoadBalancer
   ports:
     - name: port-9092
       port: 9092

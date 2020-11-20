@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ocr-service
+spec:
+  template:
+    spec:
+      containers:
+        - name: spark
+          image: kammahm/sdtd_data_processing:latest
+          command: [
+            "/bin/sh",
+            "-c",
+            "/opt/spark/bin/spark-submit \
+             --master k8s://https://10.0.0.127:6443 \
+            --deploy-mode cluster \
+            --name data_processing \
+            --conf spark.kubernetes.container.image=kammahm/sdtd_data_processing:latest \
+            --conf spark.kubernetes.container.image.pullPolicy=Always \
+            --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
+            --conf spark.kubernetes.driverEnv.KAFKA_SERVER1='#KAFKA_SERVER1#:9092' \
+            --conf spark.kubernetes.driverEnv.KAFKA_SERVER2='#KAFKA_SERVER2#:9092' \
+            --conf spark.kubernetes.driverEnv.ZK_SERVER1='#ZK_SERVER1#:2181' \
+            --conf spark.kubernetes.driverEnv.ZK_SERVER2='#ZK_SERVER2#:2181' \
+            --conf spark.kubernetes.driverEnv.K8S_MASTER='#K8S_MASTER#' \
+            --jars '/opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar' \
+            local:///ensimag-sdtd/run_service.py "
+          ]
+      serviceAccountName: spark
+      restartPolicy: Never
+  backoffLimit: 4
