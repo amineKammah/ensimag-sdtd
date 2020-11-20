@@ -1,6 +1,7 @@
 from typing import List
+import os
 
-from pyspark import SparkContext
+from pyspark import SparkContext, SparkConf
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
 
@@ -10,48 +11,47 @@ from data_processing.optical_character_recognizer import OpticalCharacterRecogni
 
 
 class OCRService:
-    def __init__(self, kafka_server: str, consumer_topic: str, producer_topic: str, distribution_threshold: int = 30):
-        self.distribution_threshold = distribution_threshold
-        self.kafka_server = kafka_server
-        self.kafka_agent = KafkaAgent(kafka_server)
+    def __init__(self, zk_quorums: List[str], kafka_servers: List[str], k8s_master: str, consumer_topic: str, producer_topic: str):
+#         os.environ['PYSPARK_SUBMIT_ARGS'] = (
+#             '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar,' +
+#             '/opt/spark/spark-kubernetes_2.12-2.4.4.jar pyspark-shell'
+#         )
+
+        os.environ['PYSPARK_SUBMIT_ARGS'] = (
+            '--jars /opt/spark/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar pyspark-shell'
+        )
+
+        self.zk_quorums = zk_quorums
+        self.kafka_servers = kafka_servers
         self.consumer_topic = consumer_topic
         self.producer_topic = producer_topic
-
-
-    @staticmethod
-    def _distributed_extract(images):
-        sc = SparkContext("local", "first app")
-        sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
-        from data_processing.optical_character_recognizer import OpticalCharacterRecognizer
-
-        return sc.parallelize(images).map(lambda image: OpticalCharacterRecognizer.extract(image)).collect()
+        self.k8s_master = k8s_master
 
     @staticmethod
-    def _parallelized_extract(images) -> List:
-        return list(map(lambda image: OpticalCharacterRecognizer.extract(image), images))
+    def _process_event(event, kafka_servers, topic):
+        print(f"Processing image: {event[1]}")
+        extracted_text = OpticalCharacterRecognizer.extract(event[1])
 
-    @staticmethod
-    def _process_event(event, agent, topic):
-        image = event.value.decode("utf-8")
-        extracted_text = OpticalCharacterRecognizer.extract(image)
+        KafkaAgent(kafka_servers).produce(topic, [extracted_text])
 
-        agent.produce(topic, [extracted_text])
         return extracted_text
 
-
     def start(self) -> None:
-        sc = SparkContext("local", "first app")
+        sparkConf = SparkConf()
+#         sparkConf.setMaster(self.k8s_master)
+        sparkConf.setAppName("OCRService")
+#         sparkConf.set("spark.kubernetes.container.image", "kammahm/sdtd_data_processing:latest")
+#         sparkConf.set("spark.executor.instances", 1)
+#         sparkConf.set("spark.executor.cores", 2)
+
+        sc = SparkContext(conf=sparkConf)
         sc.addPyFile('/ensimag-sdtd/data_processing/optical_character_recognizer.py')
         from data_processing.optical_character_recognizer import OpticalCharacterRecognizer
 
         ssc = StreamingContext(sc, 2)
-        kvs = KafkaUtils.createStream(ssc, self.kafka_server, "event-consumer", {self.consumer_topic:1})
+        kvs = KafkaUtils.createStream(ssc, self.zk_quorums[0], "event-consumer", {self.consumer_topic:1})
 
-        kvs.map(lambda event: OCRService._process_event(event, self.kafka_agent, self.producer_topic)).collect()
+        kvs.map(lambda event: OCRService._process_event(event, self.kafka_servers, self.producer_topic)).pprint()
 
         ssc.start()
         ssc.awaitTermination()
-
-    @staticmethod
-    def _prep_input_batch(batch) -> List:
-        return list(map(lambda value: value.value.decode("utf-8"), batch))

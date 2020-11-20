@@ -15,23 +15,17 @@
 # limitations under the License.
 #
 
-
 FROM gradiant/spark:2.4.4-python
 WORKDIR /
 
 # Reset to root to run installation tasks
 USER 0
 
-# TODO: Investigate running both pip and pip3 via virtualenvs
 RUN apt-get update
-#     apt install -y python python-pip && \
-# RUN mkdir -p /usr/share/man/man1 && apt install -y openjdk-11-jre
 
 RUN apt install -y tesseract-ocr libtesseract-dev git vim && \
     # We remove ensurepip since it adds no functionality since pip is
     # installed on the image and it just takes up 1.6MB on the image
-#     rm -r /usr/lib/python*/ensurepip && \
-#     pip3 install --upgrade pip setuptools && \
     pip3 install pytesseract Pillow kafka-python && \
     # You may install with python3 packages by using pip3.6
     # Removed the .cache to save space
@@ -39,10 +33,10 @@ RUN apt install -y tesseract-ocr libtesseract-dev git vim && \
 
 RUN git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git /ensimag-sdtd
 
-WORKDIR /
+RUN cd $SPARK_HOME && \
+    wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.4.4/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar && \
+    ln -s /usr/bin/python3 /usr/bin/python
+
+RUN chmod +x /ensimag-sdtd/data_processing/spark_cluster_setup/*
+
 # ENTRYPOINT [ "/bin/bash" ]
-
-# Specify the User that the actual main process will run as
-# ARG spark_uid=185
-# USER ${spark_uid}
-

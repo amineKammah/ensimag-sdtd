@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: spark-master
+  name: spark-master
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: spark-master
+  template:
+    metadata:
+      labels:
+        name: spark-master
+    spec:
+      containers:
+      - name : spark-master
+        image: kammahm/sdtd_data_processing:latest
+        imagePullPolicy: "Always"
+        ports:
+        - containerPort: 7077
+          protocol: TCP
+        command:
+          - "/bin/bash"
+          - "-c"
+          - "--"
+        args:
+          - '/ensimag-sdtd/data_processing/spark_cluster_setup/start-master.sh ; sleep infinity'
