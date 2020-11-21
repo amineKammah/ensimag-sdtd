@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>SDTD Demo App</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+    </head>
+    <body>
+
+        <div class="jumbotron jumbotron-fluid">
+          <div class="container">
+            <h1>SDTD Demo App</h1>
+          </div>
+        </div>
+
+        <div class="input-group col-md-4">
+              <input class="form-control py-2" type="text" id="sendInput" placeholder="Enter the number of images to send to the server">
+              <span class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button" id="sendButton" onclick="send_images()">
+                    <i>send</i>
+                </button>
+              </span>
+            <div class="container">
+              <p class="text-success" id="sendSuccess"></p>
+            </div>
+        </div>
+
+        <br>
+        <br>
+        <br>
+        <div class="card">
+          <div class="card-body" id="currentImages">
+          </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="card">
+          <div class="card-header">
+              <h3>
+                Extracted text
+              </h3>
+          </div>
+          <ul class="list-group list-group-flush" id="extractedText">
+            <li class="list-group-item">Cras justo odio</li>
+            <li class="list-group-item">Dapibus ac facilisis in</li>
+            <li class="list-group-item">Vestibulum at eros</li>
+          </ul>
+        </div>
+    </body>
+    <script language="javascript" type="text/javascript">
+      var timeout = setInterval(loadCurrentProcessing, 500);    
+      function loadCurrentProcessing () {
+        $('#currentImages').load('/get_current_processing');
+      }
+
+      var timeout = setInterval(loadExtractedText, 500);    
+      function loadExtractedText () {
+        $('#extractedText').load('/get_extracted_text');
+      }
+
+      function send_images() {
+        var number = document.getElementById("sendInput").value
+        document.getElementById("sendInput").value = ""
+        $("#sendSuccess").load('/send/' + number);
+      }
+      </script>
+</html>
+

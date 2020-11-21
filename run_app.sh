@@ -34,3 +34,7 @@ sed "$sub_pattern" data_processing/yaml_files/spark-job.yaml > /tmp/spark-job.ya
 kubectl create -f /tmp/spark-job.yaml
 
 # Run Demo app
+sub_pattern="s/#KAFKA_SERVER1#/$KAFKA_SERVER1/;s/#KAFKA_SERVER2#/$KAFKA_SERVER2/"
+sed "$sub_pattern" demo_app/yaml_files/flask-deployment.yaml > /tmp/flask-deployment.yaml
+kubectl create -f /tmp/flask-deployment.yaml
+kubectl port-forward deployment/demo-app 5001:5001 &

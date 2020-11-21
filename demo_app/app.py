@@ -61,7 +61,3 @@ def start_receiver():
 def home():
     start_receiver()
     return render_template("index.html")
-
-
-if __name__ == "__main__":
-    app.run()
