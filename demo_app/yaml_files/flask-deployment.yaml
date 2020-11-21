@@ -36,3 +36,8 @@ spec:
           value: "#KAFKA_SERVER1#"
         - name: KAFKA_SERVER2
           value: "#KAFKA_SERVER2#"
+        command: [
+            "/bin/sh",
+            "-c",
+            "git pull && python3 run_demo_app.py"
+        ]

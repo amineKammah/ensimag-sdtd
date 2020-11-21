@@ -49,7 +49,7 @@ def start_receiver():
     # get results
     global extracted_text
     start = time.time()
-    for image_n, text in zip(range(1000), extracted_text):
+    for image_n, text in enumerate(consumer):
         extracted_text.append(text)
         current_processing_images -= 1
         print(

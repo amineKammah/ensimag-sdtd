@@ -93,30 +93,7 @@ kubeadm init --apiserver-advertise-address=18.207.130.136 --pod-network-cidr=192
 
 
 
--------------------------------------------
----
-apiServer:
-  extraArgs:
-    cloud-provider: aws
-apiServerCertSANs:
-- cp.theithollowlab.com
-apiServerExtraArgs:
-  endpoint-reconciler-type: lease
-apiVersion: kubeadm.k8s.io/v1beta1
-clusterName: sdtd #your cluster name
-controllerManager:
-  extraArgs:
-    cloud-provider: aws
-    configure-cloud-routes: 'false'
-kind: ClusterConfiguration
-kubernetesVersion: 1.19.3 #your desired k8s version
-networking:
-  dnsDomain: cluster.local
-  podSubnet: 10.0.0.0/24 #your pod subnet matching your CNI config
-nodeRegistration:
-  kubeletExtraArgs:
-    cloud-provider: aws
-
+------------------------------------------
 swapoff -a
 sed -i.bak -r 's/(.+ swap .+)/#\1/' /etc/fstab
 
@@ -168,3 +145,23 @@ kafka_servers = ['a04ea17a4263d4e8f9aaecdc8b1b5ed3-1962944993.us-east-1.elb.amaz
 zoo
 a0efe17d6231542d1a3b0701d747e315-1175272134.us-east-1.elb.amazonaws.com
 a112424ef425a4120bdb1866e2e1192d-925634392.us-east-1.elb.amazonaws.com
+
+
+----------
+
+sudo swapoff -a
+sudo apt update && apt -y upgrade
+sudo apt-get install docker.io -y
+sudo systemctl enable docker
+sudo systemctl status docker
+sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add
+sudo apt-add-repository "deb http://apt.kubernetes.io/ kubernetes-xenial main"
+sudo apt-get install kubeadm kubelet kubectl -y
+sudo apt-mark hold kubeadm kubelet kubectl
+host_name=$(curl http://169.254.169.254/latest/meta-data/local-hostname)
+sudo hostnamectl set-hostname $host_name
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml

@@ -1,1 +1,1 @@
-kubectl delete --force service/zoo2 service/zoo1 service/kaf2 service/kaf1 replicationcontroller/zookeeper2 replicationcontroller/zookeeper1 replicationcontroller/kafka1 replicationcontroller/kafka2 job.batch/ocr-servicea
+kubectl delete --force service/zoo2 service/zoo1 service/kaf2 service/kaf1 replicationcontroller/zookeeper2 replicationcontroller/zookeeper1 replicationcontroller/kafka1 replicationcontroller/kafka2 job.batch/ocr-service deployment.apps/demo-app service/demo-app-service
