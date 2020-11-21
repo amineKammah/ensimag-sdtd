@@ -10,6 +10,7 @@ class OpticalCharacterRecognizer:
     """
     Uses Tesseract to extract text from images.
     """
+
     @staticmethod
     def extract(image_path: str) -> str:
         image = Image.open(image_path)

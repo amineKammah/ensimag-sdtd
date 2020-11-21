@@ -1,8 +1,8 @@
 import os
-from typing import Generator, List
 import random
+from typing import Generator, List
 
-from kafka import KafkaProducer, KafkaAdminClient, KafkaConsumer
+from kafka import KafkaAdminClient, KafkaConsumer, KafkaProducer
 from kafka.admin import NewTopic
 
 
@@ -13,25 +13,29 @@ class KafkaAgent:
 
     def create_topic(self, kafka_topic: str, error_if_exists: bool = False):
         if not error_if_exists:
-            existing_topics = KafkaConsumer(bootstrap_servers=self.kafka_servers).topics()
+            existing_topics = KafkaConsumer(
+                bootstrap_servers=self.kafka_servers
+            ).topics()
             if kafka_topic in existing_topics:
                 print(f"Failed to create topic, topic '{kafka_topic}' already exists.")
                 return
 
         admin = KafkaAdminClient(bootstrap_servers=self.kafka_servers)
 
-        topic = NewTopic(name=kafka_topic,
-                         num_partitions=1,
-                         replication_factor=1)
+        topic = NewTopic(name=kafka_topic, num_partitions=1, replication_factor=1)
         admin.create_topics([topic])
 
     def consumer(self, kafka_topic: str, timeout_ms: int) -> KafkaConsumer:
-        kafka_consumer = KafkaConsumer(bootstrap_servers=self.kafka_servers, consumer_timeout_ms=timeout_ms)
+        kafka_consumer = KafkaConsumer(
+            bootstrap_servers=self.kafka_servers, consumer_timeout_ms=timeout_ms
+        )
         kafka_consumer.subscribe([kafka_topic])
 
         return kafka_consumer
 
-    def batch_consumer(self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000) -> Generator[List, None, None]:
+    def batch_consumer(
+        self, kafka_topic: str, batch_size: int = 100, timeout_ms: int = 1_000
+    ) -> Generator[List, None, None]:
         kafka_consumer = self.consumer(kafka_topic, timeout_ms)
 
         while True:
@@ -47,5 +51,7 @@ class KafkaAgent:
         dateset = os.listdir(test_data_path)
 
         images = random.choices(dateset, k=k)
-        images_full_path = ["test_data/how_to_win_argments/" + image for image in images]
+        images_full_path = [
+            "test_data/how_to_win_argments/" + image for image in images
+        ]
         self.produce(kafka_topic, images_full_path)
