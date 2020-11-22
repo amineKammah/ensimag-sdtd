@@ -48,12 +48,12 @@
         </div>
     </body>
     <script language="javascript" type="text/javascript">
-      var timeout = setInterval(loadCurrentProcessing, 500);    
+      var timeout = setInterval(loadCurrentProcessing, 2000);    
       function loadCurrentProcessing () {
         $('#currentImages').load('/get_current_processing');
       }
 
-      var timeout = setInterval(loadExtractedText, 500);    
+      var timeout = setInterval(loadExtractedText, 2000);    
       function loadExtractedText () {
         $('#extractedText').load('/get_extracted_text');
       }
