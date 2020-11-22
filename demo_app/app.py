@@ -33,7 +33,8 @@ def get_current_processing_images():
 def get_extracted_text():
     consumer = kafka_agent.consumer("text_feed", 500, "earliest")
     output = ""
-    for processed_n, text in enumerate(consumer):
+    for processed_n, event in enumerate(consumer):
+        event = str(event.value)
         if len(text) > 100:
             text = text[:500] + "..."
         output += f'<li class="list-group-item">{text}</li>'
