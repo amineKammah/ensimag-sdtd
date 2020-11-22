@@ -10,8 +10,9 @@ app = Flask(__name__)
 kafka_servers = [os.environ.get("KAFKA_SERVER1"), os.environ.get("KAFKA_SERVER2")]
 kafka_agent = KafkaAgent(kafka_servers)
 
-global total_sent, total_processed
-total_sent, total_processed = 0, 0
+global total_sent,extracted_text, consumer
+total_sent, extracted_text = 0, []
+consumer = kafka_agent.consumer("text_feed", 500, "earliest")
 
 
 @app.route("/send/<number>")
@@ -26,22 +27,24 @@ def send(number: int):
 
 @app.route("/get_current_processing")
 def get_current_processing_images():
-    return f"Currently processing {total_sent - total_processed} images."
+    global total_sent, extracted_text
+    return f"Currently processing {total_sent - len(extracted_text)} images."
 
 
 @app.route("/get_extracted_text")
 def get_extracted_text():
-    consumer = kafka_agent.consumer("text_feed", 500, "earliest")
-    output = ""
-    for processed_n, event in enumerate(consumer):
+    global extracted_text
+    for event in consumer:
+        print(event)
         event = str(event.value)
         if len(text) > 100:
             text = text[:500] + "..."
+        extracted_text.append(text)
+
+    output = ""
+    for text in extracted_text:
         output += f'<li class="list-group-item">{text}</li>'
-
-    global total_processed
-    total_processed = processed_n
-
+    
     return output
 
 
