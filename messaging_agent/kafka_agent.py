@@ -50,11 +50,11 @@ class KafkaAgent:
         for value in data:
             self.kafka_producer.send(kafka_topic, value=bytes(value, "utf-8"))
 
-    def random_producer(self, kafka_topic: str, k: int) -> None:
+    def random_producer(self, kafka_topic: str, k: int, seed: int = 0) -> None:
         test_data_path = "test_data/how_to_win_argments/"
         dateset = os.listdir(test_data_path)
 
-        random.seed(30)
+        random.seed(seed)
         images = random.choices(dateset, k=k)
         images_full_path = [
             "test_data/how_to_win_argments/" + image for image in images
