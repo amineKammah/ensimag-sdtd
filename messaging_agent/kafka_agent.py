@@ -22,7 +22,7 @@ class KafkaAgent:
 
         admin = KafkaAdminClient(bootstrap_servers=self.kafka_servers)
 
-        topic = NewTopic(name=kafka_topic, num_partitions=1, replication_factor=1)
+        topic = NewTopic(name=kafka_topic, num_partitions=10, replication_factor=1)
         admin.create_topics([topic])
 
     def consumer(

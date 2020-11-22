@@ -49,7 +49,7 @@ class OCRService:
 
         ssc = StreamingContext(sc, 2)
         kvs = KafkaUtils.createStream(
-            ssc, self.zk_quorums[0], "event-consumer", {self.consumer_topic: 1}
+            ssc, self.zk_quorums[0], "event-consumer", {self.consumer_topic: 10}
         )
 
         kvs.map(
