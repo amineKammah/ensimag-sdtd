@@ -35,13 +35,14 @@ def get_extracted_text():
     global total_processed
     consumer = kafka_agent.consumer("text_feed", 500, "earliest")
     output = ""
-    for processed_n, event in enumerate(consumer):
+
+    total_processed = 0
+    for event in consumer:
+        total_processed += 1
         text = event.value.decode("utf-8")
         if len(text) > 100:
             text = text[:500] + "..."
         output += f'<li class="list-group-item">{text}</li>'
-
-    total_processed = processed_n + 1
 
     return output
 
