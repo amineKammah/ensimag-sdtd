@@ -50,6 +50,7 @@ class KafkaAgent:
         test_data_path = "test_data/how_to_win_argments/"
         dateset = os.listdir(test_data_path)
 
+        random.seed(30)
         images = random.choices(dateset, k=k)
         images_full_path = [
             "test_data/how_to_win_argments/" + image for image in images

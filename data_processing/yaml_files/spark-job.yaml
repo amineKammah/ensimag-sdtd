@@ -17,6 +17,8 @@ spec:
             --name data_processing \
             --conf spark.kubernetes.container.image=kammahm/sdtd_data_processing:latest \
             --conf spark.kubernetes.container.image.pullPolicy=Always \
+            --conf spark.executor.instances=1 \
+            --conf spark.executor.cores=1 \
             --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
             --conf spark.kubernetes.driverEnv.KAFKA_SERVER1='#KAFKA_SERVER1#:9092' \
             --conf spark.kubernetes.driverEnv.KAFKA_SERVER2='#KAFKA_SERVER2#:9092' \

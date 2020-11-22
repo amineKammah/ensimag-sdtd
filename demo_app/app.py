@@ -41,8 +41,8 @@ def get_extracted_text():
             text = text[:500] + "..."
         output += f'<li class="list-group-item">{text}</li>'
 
-    total_processed = processed_n
-    
+    total_processed = processed_n + 1
+
     return output
 
 
