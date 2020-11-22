@@ -6,6 +6,7 @@ from messaging_agent.kafka_agent import KafkaAgent
 kafka_servers = [os.environ.get("KAFKA_SERVER1"), os.environ.get("KAFKA_SERVER2")]
 kafka_agent = KafkaAgent(kafka_servers)
 
+
 def run_benchmark(n_images):
 
     consumer = kafka_agent.consumer("text_feed", float("inf"))
@@ -21,5 +22,5 @@ def run_benchmark(n_images):
         start = time.time()
 
         print(f"processed image {processed_n + 1}, processing time: {processing_time}.")
-    
+
     print(time_list)
