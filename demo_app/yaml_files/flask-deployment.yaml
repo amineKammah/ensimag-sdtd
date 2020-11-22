@@ -8,7 +8,7 @@ spec:
     app: demo-app
   ports:
   - protocol: "TCP"
-    port: 5001
+    port: 5000
     targetPort: 5000
 
 ---

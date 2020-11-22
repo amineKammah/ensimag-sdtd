@@ -25,9 +25,9 @@ class KafkaAgent:
         topic = NewTopic(name=kafka_topic, num_partitions=1, replication_factor=1)
         admin.create_topics([topic])
 
-    def consumer(self, kafka_topic: str, timeout_ms: int) -> KafkaConsumer:
+    def consumer(self, kafka_topic: str, timeout_ms: int, auto_offset_reset: str = "latest") -> KafkaConsumer:
         kafka_consumer = KafkaConsumer(
-            bootstrap_servers=self.kafka_servers, consumer_timeout_ms=timeout_ms
+            bootstrap_servers=self.kafka_servers, consumer_timeout_ms=timeout_ms, auto_offset_reset=auto_offset_reset
         )
         kafka_consumer.subscribe([kafka_topic])
 
