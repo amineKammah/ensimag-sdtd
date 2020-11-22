@@ -1,1 +1,5 @@
-kubectl delete --force service/zoo2 service/zoo1 service/kaf2 service/kaf1 replicationcontroller/zookeeper2 replicationcontroller/zookeeper1 replicationcontroller/kafka1 replicationcontroller/kafka2 job.batch/ocr-service deployment.apps/demo-app service/demo-app-service
+kubectl delete --all replicationcontrollers --force
+kubectl delete --all jobs --force 
+kubectl delete --all deployments --force
+kubectl delete --all pods --force
+kubectl delete --all services --force
