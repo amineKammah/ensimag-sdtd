@@ -39,4 +39,9 @@ RUN cd $SPARK_HOME && \
 
 RUN chmod +x /ensimag-sdtd/data_processing/spark_cluster_setup/*
 
+WORKDIR /ensimag-sdtd/
+
+RUN pip3 install flask
+
+EXPOSE 5000
 # ENTRYPOINT [ "/bin/bash" ]
