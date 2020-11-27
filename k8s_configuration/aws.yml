@@ -1,4 +1,3 @@
----
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: v1.19.4
@@ -11,3 +10,13 @@ apiServer:
 controllerManager:
   extraArgs:
     cloud-provider: "aws"
+---
+apiVersion: kubeadm.k8s.io/v1beta1
+kind: InitConfiguration
+bootstrapTokens:
+- token: "#TOKEN#"
+  description: "default kubeadm bootstrap token"
+  ttl: "15m"
+localAPIEndpoint:
+  advertiseAddress: "#MASTER_IP#"
+  bindPort: 6443
