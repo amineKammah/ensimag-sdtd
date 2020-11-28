@@ -11,19 +11,6 @@ locals {
   cluster_name = var.cluster_name != null ? var.cluster_name : random_pet.cluster_name.id
 }
 
-#------------------------------------------------------------------------------#
-# Elastic IP for master node
-#------------------------------------------------------------------------------#
-
-# EIP for master node because it must know its public IP during initialisation
-resource "aws_eip" "master" {
-  vpc  = true
-}
-
-resource "aws_eip_association" "master" {
-  allocation_id = aws_eip.master.id
-  instance_id   = aws_instance.master.id
-}
 
 #------------------------------------------------------------------------------#
 # Bootstrap token for kubeadm
@@ -83,18 +70,22 @@ resource "aws_instance" "master" {
   git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
   #k8s_configuration/aws.yml
   cd ~/ensimag-sdtd
-  sub_pattern='s/#TOKEN#/${local.token}/;s/#MASTER_IP#/${aws_instance.master.private_ip}/'
+  varMasterIp=$(hostname -I)
+  varMaster=$(echo $varMasterIp | cut -d' ' -f1)
+  sub_pattern="s/#TOKEN#/${local.token}/;s/#MASTER_IP#/$varMaster/"
   sed "$sub_pattern" k8s_configuration/aws.yml > ~/aws_sdtd.yml
-
+  cat ~/aws_sdtd.yml
   sudo kubeadm init --config ~/aws_sdtd.yml
   # Prepare kubeconfig file for download to local machine
   mkdir -p $HOME/.kube
   sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
   sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  
+  chmod +x k8s_configuration/run_kubeadm.sh
+  ./k8s_configuration/run_kubeadm.sh
   # Make the master ready
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   chmod +x run_app.sh
+  chmod +x destroy_app.sh
   sleep 30
   ./run_app.sh
   EOF
@@ -136,8 +127,9 @@ resource "aws_instance" "workers" {
   git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
   #k8s_configuration/aws.yml
   cd ~/ensimag-sdtd
-  sub_pattern='s/#TOKEN#/${local.token}/;s/#MASTER_IP#/${aws_instance.master.private_ip}/;s/#HOSTNAME#/$varHost/'
+  sub_pattern="s/#TOKEN#/${local.token}/;s/#MASTER_IP#/${aws_instance.master.private_ip}/;s/#HOSTNAME#/$varHost/"
   sed "$sub_pattern" k8s_configuration/node.yml > ~/node_sdtd.yml
+  cat ~/node_sdtd.yml
   sudo kubeadm join --config ~/node_sdtd.yml
   EOF
 }
