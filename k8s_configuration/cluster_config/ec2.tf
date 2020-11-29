@@ -54,7 +54,6 @@ resource "aws_instance" "master" {
   }
   user_data = <<-EOF
   #!/bin/bash
-
   # Install kubeadm and Docker
   sudo apt update && sudo apt -y upgrade
   sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
@@ -75,13 +74,11 @@ resource "aws_instance" "master" {
   sub_pattern="s/#TOKEN#/${local.token}/;s/#MASTER_IP#/$varMaster/"
   sed "$sub_pattern" k8s_configuration/aws.yml > ~/aws_sdtd.yml
   cat ~/aws_sdtd.yml
-  sudo kubeadm init --config ~/aws_sdtd.yml
+  kubeadm init --config ~/aws_sdtd.yml
   # Prepare kubeconfig file for download to local machine
-  mkdir -p $HOME/.kube
-  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  chmod +x k8s_configuration/run_kubeadm.sh
-  ./k8s_configuration/run_kubeadm.sh
+  mkdir -p /root/.kube
+  sudo cp -i /etc/kubernetes/admin.conf /root/.kube/config
+  sudo chown 0:0 /root/.kube/config
   # Make the master ready
   kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
   chmod +x run_app.sh
@@ -137,8 +134,8 @@ resource "aws_instance" "workers" {
 
 # to use if the aws key pai doesn't exist
 # aws_key_pair
-resource "aws_key_pair" "deployer" {
-   key_name   = "id_rsa_sdtd"
-   public_key = file(var.public_key_file)
-}
+#resource "aws_key_pair" "deployer" {
+ #  key_name   = "id_rsa_sdtd"
+  # public_key = file(var.public_key_file)
+#}
  #---------------------------------------------------------------------------
