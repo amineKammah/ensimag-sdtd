@@ -1,11 +1,13 @@
 import os
 from typing import List
 
-from data_processing.optical_character_recognizer import OpticalCharacterRecognizer
-from messaging_agent.kafka_agent import KafkaAgent
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark.streaming.kafka import KafkaUtils
+
+from data_processing.optical_character_recognizer import \
+    OpticalCharacterRecognizer
+from messaging_agent.kafka_agent import KafkaAgent
 
 
 class OCRService:
@@ -43,9 +45,8 @@ class OCRService:
 
         sc = SparkContext(conf=sparkConf)
         sc.addPyFile("/ensimag-sdtd/data_processing/optical_character_recognizer.py")
-        from data_processing.optical_character_recognizer import (
-            OpticalCharacterRecognizer,
-        )
+        from data_processing.optical_character_recognizer import \
+            OpticalCharacterRecognizer
 
         ssc = StreamingContext(sc, 2)
         kvs = KafkaUtils.createStream(

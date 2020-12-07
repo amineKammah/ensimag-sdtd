@@ -1,9 +1,8 @@
 import os
 from typing import List
 
-from PIL import Image
-
 import pytesseract
+from PIL import Image
 
 
 class OpticalCharacterRecognizer:
