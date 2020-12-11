@@ -1,5 +1,4 @@
 import os
-import time
 
 from flask import Flask, render_template
 
@@ -10,8 +9,8 @@ app = Flask(__name__)
 kafka_servers = [os.environ.get("KAFKA_SERVER1"), os.environ.get("KAFKA_SERVER2")]
 kafka_agent = KafkaAgent(kafka_servers)
 
-global total_sent, total_processed
-total_sent, total_processed = 0, 0
+global total_sent, total_processed, output
+total_sent, total_processed, output = 0, 0, ""
 
 
 @app.route("/send/<number>")
@@ -32,9 +31,13 @@ def get_current_processing_images():
 
 @app.route("/get_extracted_text")
 def get_extracted_text():
-    global total_processed
-    consumer = kafka_agent.consumer("text_feed", 500, "earliest")
-    output = ""
+    update_extracted_text()
+    global output
+    return output
+
+def update_extracted_text():
+    global output, total_processed
+    consumer = kafka_agent.consumer("text_feed", 500)
 
     total_processed = 0
     for event in consumer:
@@ -42,9 +45,7 @@ def get_extracted_text():
         text = event.value.decode("utf-8")
         if len(text) > 100:
             text = text[:500] + "..."
-        output += f'<li class="list-group-item">{text}</li>'
-
-    return output
+        output += f'<li kclass="list-group-item">{text}</li>'
 
 
 @app.route("/")
