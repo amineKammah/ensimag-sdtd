@@ -39,7 +39,6 @@ def update_extracted_text():
     global output, total_processed
     consumer = kafka_agent.consumer("text_feed", 500)
 
-    total_processed = 0
     for event in consumer:
         total_processed += 1
         text = event.value.decode("utf-8")
