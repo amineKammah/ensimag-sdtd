@@ -8,7 +8,7 @@ from messaging_agent.kafka_agent import KafkaAgent
 kafka_servers = [os.environ.get("KAFKA_SERVER1"), os.environ.get("KAFKA_SERVER2")]
 kafka_agent = KafkaAgent(kafka_servers)
 
-SPARK_EXECUTERS = 4
+SPARK_EXECUTERS = 2
 
 global total_received, time_list
 total_received = 0
@@ -33,7 +33,7 @@ def receive_images(n_images):
 
 
 def run_benchmark(n_images):
-    receiver_th = threading.Thread(target=receive_images, args=(n_images))
+    receiver_th = threading.Thread(target=receive_images, args=(n_images,))
     receiver_th.start()
 
     global total_received, time_list
