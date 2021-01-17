@@ -32,11 +32,16 @@ class OCRService:
 
     @staticmethod
     def _process_event(event, kafka_servers, topic):
-        image_path = event[1]
-        extracted_text = OpticalCharacterRecognizer.extract(image_path)
+        try:
+            image_path = event[1]
+            extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
-        value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
-        KafkaAgent(kafka_servers).produce(topic, value=value)
+            value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
+            KafkaAgent(kafka_servers).produce(topic, value=value)
+        except Exception as e:
+            print(e)
+            KafkaAgent(kafka_servers).produce(topic, value=bytes(f"Error in extracting text: {e}", "ascii")
+            return f"Error in extracting text: {e}"
 
         return extracted_text
 
