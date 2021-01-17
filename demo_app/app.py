@@ -46,7 +46,7 @@ def update_extracted_text():
         print("event: ", event)
         if len(text) > 500:
             text = text[:500] + "..."
-        extracted_text += f'<li kclass="list-group-item">{sorted_by_image[1]}</li>'
+        extracted_text += f'<li kclass="list-group-item">{sorted_by_time[1]}</li>'
 
     global output, total_processed
     output = extracted_text
