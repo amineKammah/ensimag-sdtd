@@ -61,7 +61,8 @@ resource "aws_instance" "master" {
   curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
   apt update
-  apt install -y docker-ce kubelet kubeadm kubectl
+  apt-get install docker-ce=19.03.8
+  apt install -y kubelet kubeadm kubectl
 
   # Configure hostname
   varHost=$( curl http://169.254.169.254/latest/meta-data/local-hostname)
@@ -114,8 +115,8 @@ resource "aws_instance" "workers" {
   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   sudo bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
-  sudo apt update
-  sudo apt install -y docker-ce kubelet kubeadm kubectl
+  apt-get install docker-ce=19.03.8
+  sudo apt install -y kubelet kubeadm kubectl
 
   # Configure hostname
   varHost=$(sudo curl http://169.254.169.254/latest/meta-data/local-hostname)
