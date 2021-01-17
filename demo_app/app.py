@@ -39,7 +39,7 @@ def update_extracted_text():
     
     consumer = kafka_agent.consumer("text_feed", 500, "earliest")
 
-    timestamped_text = list(map(lambda event: (event.timestamp, event.value.decode("utf-8"), consumer)))
+    timestamped_text = list(map(lambda event: (event.timestamp, event.value.decode("utf-8")), consumer))
     sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
     extracted_text = ""
     for event in sorted_by_image:
