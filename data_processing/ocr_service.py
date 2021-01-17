@@ -35,7 +35,7 @@ class OCRService:
         image_path = event[1]
         extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
-        KafkaAgent(kafka_servers).produce(topic, [{"text": extracted_text, "image": image_path}])
+        KafkaAgent(kafka_servers).produce(topic, key=image_path, value=extracted_text])
 
         return extracted_text
 

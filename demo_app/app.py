@@ -1,4 +1,3 @@
-import ast
 import os
 
 from flask import Flask, render_template
@@ -37,19 +36,21 @@ def get_extracted_text():
     return output
 
 def update_extracted_text():
-    global output, total_processed
-    consumer = kafka_agent.consumer("text_feed", 500)
+    
+    consumer = kafka_agent.consumer("text_feed", 500, "earliest")
 
-    # image_text_maps = list(map(consumer, lambda event: ast.literal_eval(event.value.decode("utf-8"))))
-    # sorted_by_image = sorted(image_text_maps, key=lambda image_text_map: image_text_map["image"])
-    # print(sorted_by_image)
-    for event in consumer:
+    timestamped_text = list(map(consumer, lambda event: (event.timestamp, event.value.decode("utf-8"))))
+    sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
+    extracted_text = ""
+    for event in sorted_by_image:
         print("event: ", event)
-        total_processed += 1
-        text = event.value.decode("utf-8")
-        if len(text) > 100:
+        if len(text) > 500:
             text = text[:500] + "..."
-        output += f'<li kclass="list-group-item">{text}</li>'
+        extracted_text += f'<li kclass="list-group-item">{sorted_by_image[1]}</li>'
+
+    global output, total_processed
+    output = extracted_text
+    total_processed = len(sorted_by_time)
 
 
 @app.route("/")

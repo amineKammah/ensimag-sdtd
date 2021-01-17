@@ -46,9 +46,8 @@ class KafkaAgent:
             images = [event for _, event in zip(range(batch_size), kafka_consumer)]
             yield images
 
-    def produce(self, kafka_topic: str, data: List) -> None:
-        for value in data:
-            self.kafka_producer.send(kafka_topic, value=bytes(value, "utf-8"))
+    def produce(self, kafka_topic: str, key = None, value = None) -> None:
+        self.kafka_producer.send(kafka_topic, key=bytes(key, "utf-8"), value=bytes(value, "utf-8"))
 
     def random_producer(self, kafka_topic: str, k: int, seed: int = 0) -> None:
         test_data_path = "test_data/how_to_win_argments/"
@@ -59,4 +58,5 @@ class KafkaAgent:
         images_full_path = [
             "test_data/how_to_win_argments/" + image for image in images
         ]
-        self.produce(kafka_topic, images_full_path)
+        for image in images_full_path:
+            self.produce(kafka_topic, value=image)
