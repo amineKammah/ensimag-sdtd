@@ -62,7 +62,10 @@ resource "aws_instance" "master" {
   bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
   apt update
   apt-get install docker-ce=5:19.03.10~3-0~ubuntu-focal
-  apt install -y kubelet kubeadm kubectl
+  apt-get install kubelet=1.19.4-00
+  apt-get install kubeadm=1.19.4-00
+  apt-get install kubectl=1.19.4-00
+  #apt install -y kubelet=1.19.4-00 kubeadm=1.19.4-00 kubectl=1.19.4-00
 
   # Configure hostname
   varHost=$( curl http://169.254.169.254/latest/meta-data/local-hostname)
@@ -116,7 +119,9 @@ resource "aws_instance" "workers" {
   sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   sudo bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
   sudo apt-get install docker-ce=5:19.03.10~3-0~ubuntu-focal
-  sudo apt install -y kubelet kubeadm kubectl
+  sudo apt-get install kubelet=1.19.4-00
+  sudo apt-get install kubeadm=1.19.4-00
+  sudo apt-get install kubectl=1.19.4-00
 
   # Configure hostname
   varHost=$(sudo curl http://169.254.169.254/latest/meta-data/local-hostname)
