@@ -1,6 +1,5 @@
 import os
-import json
-from typing import 
+from typing import *
 
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
