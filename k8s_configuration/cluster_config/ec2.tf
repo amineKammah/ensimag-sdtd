@@ -135,8 +135,8 @@ resource "aws_instance" "workers" {
 
 # to use if the aws key pai doesn't exist
 # aws_key_pair
-#resource "aws_key_pair" "deployer" {
- #  key_name   = "id_rsa_sdtd"
-  # public_key = file(var.public_key_file)
-#}
+resource "aws_key_pair" "deployer" {
+  key_name   = "id_rsa_sdtd"
+  public_key = file(var.public_key_file)
+}
  #---------------------------------------------------------------------------
