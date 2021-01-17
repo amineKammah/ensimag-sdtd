@@ -39,9 +39,9 @@ class OCRService:
             value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
             KafkaAgent(kafka_servers).produce(topic, value=value)
         except Exception as e:
-            print(e)
-            KafkaAgent(kafka_servers).produce(topic, value=bytes(f"Error in extracting text: {e}", "ascii")
-            return f"Error in extracting text: {e}"
+            error_msg = f"Error in extracting text: {e}"
+            KafkaAgent(kafka_servers).produce(topic, value=bytes(error_msg, "ascii")
+            return error_msg
 
         return extracted_text
 
