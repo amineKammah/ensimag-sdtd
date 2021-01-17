@@ -42,11 +42,10 @@ def update_extracted_text():
     timestamped_text = list(map(lambda event: (event.timestamp, event.value.decode("utf-8")), consumer))
     sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
     extracted_text = ""
-    for event in sorted_by_image:
-        print("event: ", event)
+    for text in sorted_by_time:
         if len(text) > 500:
             text = text[:500] + "..."
-        extracted_text += f'<li kclass="list-group-item">{sorted_by_time[1]}</li>'
+        extracted_text += f'<li kclass="list-group-item">{text[1]}</li>'
 
     global output, total_processed
     output = extracted_text
