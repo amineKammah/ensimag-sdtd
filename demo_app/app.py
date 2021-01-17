@@ -44,8 +44,8 @@ def update_extracted_text():
     extracted_text = '<table class="table"><thead><tr><th scope="col">Image</th><th scope="col">Extracted Text</th></tr></thead><tbody>'
     for text_tuple in sorted_by_time:
 
-        if event.key:
-            image = event.key.decode("utf-8").split("/")[-1]
+        if text_tuple[1]:
+            image = text_tuple[1].decode("utf-8").split("/")[-1]
         else:
             raise ValueError("Could not find event key.")
 
