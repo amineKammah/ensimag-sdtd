@@ -37,7 +37,7 @@ class OCRService:
         extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
         value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
-        KafkaAgent(kafka_servers).produce(topic, value="test".encode("ascii"))
+        KafkaAgent(kafka_servers).produce(topic, value=value)
 
         return extracted_text
 
