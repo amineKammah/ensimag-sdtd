@@ -39,15 +39,22 @@ def update_extracted_text():
     
     consumer = kafka_agent.consumer("text_feed", 500, "earliest")
 
-    timestamped_text = list(map(lambda event: (event.timestamp, event.value.decode("utf-8")), consumer))
+    timestamped_text = list(map(lambda event: (event.timestamp, event.key, event.value), consumer))
     sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
-    extracted_text = ""
+    print(timestamped_text)
+    extracted_text = str(timestamped_text) + '<table class="table"><thead><tr><th scope="col">Image</th><th scope="col">Extracted Text</th></tr></thead><tbody>'
     for text_tuple in sorted_by_time:
-        extracted_text = text_tuple[1]
-        if len(extracted_text) > 500:
-            extracted_text = extracted_text[:500] + "..."
-        extracted_text += f'<li kclass="list-group-item">{extracted_text}</li>'
 
+        image = ""
+        # image = text_tuple[1].decode("utf-8").split("/")[-1]
+
+        text = text_tuple[2].decode("utf-8")
+        if len(text) > 500:
+            text = text[:500] + "..."
+
+        extracted_text += f'<tr><th scope="row">{image}</th><td>{text}</td></tr>'
+
+    extracted_text += "</tbody></table>"
     global output, total_processed
     output = extracted_text
     total_processed = len(sorted_by_time)
