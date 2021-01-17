@@ -45,10 +45,8 @@ def update_extracted_text():
     extracted_text = str(timestamped_text) + '<table class="table"><thead><tr><th scope="col">Image</th><th scope="col">Extracted Text</th></tr></thead><tbody>'
     for text_tuple in sorted_by_time:
 
-        if text_tuple[1]:
-            image = text_tuple[1].decode("utf-8").split("/")[-1]
-        else:
-            raise ValueError("Could not find event key.")
+        image = ""
+        # image = text_tuple[1].decode("utf-8").split("/")[-1]
 
         text = text_tuple[2].decode("utf-8")
         if len(text) > 500:
