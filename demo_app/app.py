@@ -43,8 +43,8 @@ def update_extracted_text():
     sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
     extracted_text = ""
     for text in sorted_by_time:
-        if len(text) > 500:
-            text = text[:500] + "..."
+        if len(text[1]) > 500:
+            text[1] = text[1][:500] + "..."
         extracted_text += f'<li kclass="list-group-item">{text[1]}</li>'
 
     global output, total_processed
