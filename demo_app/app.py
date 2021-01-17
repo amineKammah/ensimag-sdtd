@@ -1,3 +1,4 @@
+import ast
 import os
 
 from flask import Flask, render_template
@@ -39,7 +40,11 @@ def update_extracted_text():
     global output, total_processed
     consumer = kafka_agent.consumer("text_feed", 500)
 
+    # image_text_maps = list(map(consumer, lambda event: ast.literal_eval(event.value.decode("utf-8"))))
+    # sorted_by_image = sorted(image_text_maps, key=lambda image_text_map: image_text_map["image"])
+    # print(sorted_by_image)
     for event in consumer:
+        print("event: ", event)
         total_processed += 1
         text = event.value.decode("utf-8")
         if len(text) > 100:
