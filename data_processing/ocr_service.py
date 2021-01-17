@@ -1,4 +1,5 @@
 import os
+import json
 from typing import List
 
 from pyspark import SparkConf, SparkContext
@@ -35,7 +36,8 @@ class OCRService:
         image_path = event[1]
         extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
-        KafkaAgent(kafka_servers).produce(topic, key=image_path, value=extracted_text])
+        value = json.dumps({"image": image_path, "text": extracted_text}).encode("utf-8")
+        KafkaAgent(kafka_servers).produce(topic, value=value)
 
         return extracted_text
 
