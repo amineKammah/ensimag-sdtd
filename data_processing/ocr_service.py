@@ -32,10 +32,10 @@ class OCRService:
 
     @staticmethod
     def _process_event(event, kafka_servers, topic):
-        print(f"Processing image: {event[1]}")
-        extracted_text = OpticalCharacterRecognizer.extract(event[1])
+        image_path = event[1]
+        extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
-        KafkaAgent(kafka_servers).produce(topic, [extracted_text])
+        KafkaAgent(kafka_servers).produce(topic, key=image_path, value=extracted_text])
 
         return extracted_text
 

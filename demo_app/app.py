@@ -1,5 +1,4 @@
 import os
-import time
 
 from flask import Flask, render_template
 
@@ -10,8 +9,8 @@ app = Flask(__name__)
 kafka_servers = [os.environ.get("KAFKA_SERVER1"), os.environ.get("KAFKA_SERVER2")]
 kafka_agent = KafkaAgent(kafka_servers)
 
-global total_sent, total_processed
-total_sent, total_processed = 0, 0
+global total_sent, total_processed, output
+total_sent, total_processed, output = 0, 0, ""
 
 
 @app.route("/send/<number>")
@@ -32,19 +31,26 @@ def get_current_processing_images():
 
 @app.route("/get_extracted_text")
 def get_extracted_text():
-    global total_processed
-    consumer = kafka_agent.consumer("text_feed", 500, "earliest")
-    output = ""
-
-    total_processed = 0
-    for event in consumer:
-        total_processed += 1
-        text = event.value.decode("utf-8")
-        if len(text) > 100:
-            text = text[:500] + "..."
-        output += f'<li class="list-group-item">{text}</li>'
-
+    update_extracted_text()
+    global output
     return output
+
+def update_extracted_text():
+    
+    consumer = kafka_agent.consumer("text_feed", 500, "earliest")
+
+    timestamped_text = list(map(lambda event: (event.timestamp, event.value.decode("utf-8")), consumer))
+    sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
+    extracted_text = ""
+    for text_tuple in sorted_by_time:
+        extracted_text = text_tuple[1]
+        if len(extracted_text) > 500:
+            extracted_text = extracted_text[:500] + "..."
+        extracted_text += f'<li kclass="list-group-item">{extracted_text}</li>'
+
+    global output, total_processed
+    output = extracted_text
+    total_processed = len(sorted_by_time)
 
 
 @app.route("/")
