@@ -1,6 +1,5 @@
 import os
-import json
-from typing import 
+from typing import *
 
 from pyspark import SparkConf, SparkContext
 from pyspark.streaming import StreamingContext
@@ -33,11 +32,16 @@ class OCRService:
 
     @staticmethod
     def _process_event(event, kafka_servers, topic):
-        image_path = event[1]
-        extracted_text = OpticalCharacterRecognizer.extract(image_path)
+        extracted_text = ""
+        try:
+            image_path = event[1]
+            extracted_text = OpticalCharacterRecognizer.extract(image_path)
 
-        value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
-        KafkaAgent(kafka_servers).produce(topic, value="test".encode("ascii"))
+            value = json.dumps({"image": image_path, "text": extracted_text}).encode("ascii")
+            KafkaAgent(kafka_servers).produce(topic, value=value)
+        except Exception as e:
+            error_msg = f"Error in extracting text: {e}"
+            KafkaAgent(kafka_servers).produce(topic, value=bytes(error_msg, "ascii")
 
         return extracted_text
 

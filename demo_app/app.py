@@ -41,17 +41,16 @@ def update_extracted_text():
 
     timestamped_text = list(map(lambda event: (event.timestamp, event.value), consumer))
     sorted_by_time = sorted(timestamped_text, key=lambda element: element[0])
-    print(timestamped_text)
     extracted_text = str(timestamped_text) + '<table class="table"><thead><tr><th scope="col">Image</th><th scope="col">Extracted Text</th></tr></thead><tbody>'
-    # for event in sorted_by_time:
+    for event in sorted_by_time:
 
-    #     value = json.loads(event[1].decode("ascii"))
+        value = json.loads(event[1].decode("ascii"))
 
-    #     text, image = value["text"], value["image"]
-    #     if len(text) > 500:
-    #         text = text[:500] + "..."
+        text, image = value["text"], value["image"]
+        if len(text) > 500:
+            text = text[:500] + "..."
 
-    #     extracted_text += f'<tr><th scope="row">{image}</th><td>{text}</td></tr>'
+        extracted_text += f'<tr><th scope="row">{image}</th><td>{text}</td></tr>'
 
     extracted_text += "</tbody></table>"
     global output, total_processed
