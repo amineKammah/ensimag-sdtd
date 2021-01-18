@@ -61,11 +61,6 @@ resource "aws_instance" "master" {
   curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
   apt update
-  #apt-get install -y docker-ce=5:19.03.11~3-0~ubuntu-focal
-  #apt-get install -y kubelet=1.19.4-00
-  #apt-get install -y kubeadm=1.19.4-00
-  #apt-get install -y kubectl=1.19.4-00
-  #apt install -y kubelet=1.19.4-00 kubeadm=1.19.4-00 kubectl=1.19.4-00
   apt install -y docker-ce kubelet kubeadm kubectl
   # Configure hostname
   varHost=$( curl http://169.254.169.254/latest/meta-data/local-hostname)
@@ -79,9 +74,8 @@ resource "aws_instance" "master" {
   sed "$sub_pattern" k8s_configuration/aws.yml > ~/aws_sdtd.yml
   cat ~/aws_sdtd.yml
   export HOME=/root
-  echo "hellooo"
-  echo $HOME
-  kubeadm init --config ~/aws_sdtd.yml --v=5 --ignore-preflight-errors="ERROR SystemVerification"
+  #kubeadm init --config ~/aws_sdtd.yml --v=5 --ignore-preflight-errors="ERROR SystemVerification"
+  kubeadm init --config ~/aws_sdtd.yml
   # Prepare kubeconfig file for download to local machine
   mkdir -p /root/.kube
   cp -i /etc/kubernetes/admin.conf /root/.kube/config
@@ -121,10 +115,7 @@ resource "aws_instance" "workers" {
   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
   sudo curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
   sudo bash -c 'echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" > /etc/apt/sources.list.d/kubernetes.list'
-  sudo apt-get -y install docker-ce=5:19.03.10~3-0~ubuntu-focal
-  sudo apt-get -y install kubelet=1.19.4-00
-  sudo apt-get -y install kubeadm=1.19.4-00
-  sudo apt-get -y install kubectl=1.19.4-00
+  sudo apt update
   sudo apt install -y docker-ce kubelet kubeadm kubectl
   export HOME=/root
   echo "hello"

@@ -81,7 +81,7 @@ variable "amis" {
   variable "num_workers" {
     type        = number
     description = "Number of worker nodes."
-    default     = 1
+    default     = 6
   }
   variable "kubeconfig_dir" {
     type        = string
