@@ -41,7 +41,7 @@ class OCRService:
             KafkaAgent(kafka_servers).produce(topic, value=value)
         except Exception as e:
             error_msg = f"Error in extracting text: {e}"
-            KafkaAgent(kafka_servers).produce(topic, value=bytes(error_msg, "ascii")
+            KafkaAgent(kafka_servers).produce(topic, value=bytes(error_msg, "ascii"))
 
         return extracted_text
 

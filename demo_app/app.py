@@ -51,8 +51,8 @@ def update_extracted_text():
             text = text[:500] + "..."
 
         extracted_text += f'<tr><th scope="row">{image}</th><td>{text}</td></tr>'
-
     extracted_text += "</tbody></table>"
+    
     global output, total_processed
     output = extracted_text
     total_processed = len(sorted_by_time)

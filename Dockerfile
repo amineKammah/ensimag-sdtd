@@ -26,7 +26,7 @@ RUN apt-get update
 RUN apt install -y tesseract-ocr libtesseract-dev git vim && \
     # We remove ensurepip since it adds no functionality since pip is
     # installed on the image and it just takes up 1.6MB on the image
-    pip3 install pytesseract Pillow kafka-python && \
+    pip3 install pytesseract Pillow kafka-python flask && \
     # You may install with python3 packages by using pip3.6
     # Removed the .cache to save space
     rm -r /root/.cache && rm -rf /var/cache/apt/*
@@ -37,11 +37,7 @@ RUN cd $SPARK_HOME && \
     wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.4.4/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar && \
     ln -s /usr/bin/python3 /usr/bin/python
 
-RUN chmod +x /ensimag-sdtd/data_processing/spark_cluster_setup/*
-
 WORKDIR /ensimag-sdtd/
-
-RUN pip3 install flask
 
 EXPOSE 5000
 # ENTRYPOINT [ "/bin/bash" ]
