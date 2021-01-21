@@ -39,6 +39,9 @@ sub_pattern="s/#KAFKA_SERVER1#/$KAFKA_SERVER1/;s/#KAFKA_SERVER2#/$KAFKA_SERVER2/
 sed "$sub_pattern" demo_app/yaml_files/flask-deployment.yaml > /tmp/flask-deployment.yaml
 kubectl create -f /tmp/flask-deployment.yaml
 
-sleep 5
+sleep 20
 demo_app_link=$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "The app has launched, open $demo_app_link:8080 to access the demo app."
+touch adress_ip.txt
+chmod 777 adress_ip.txt
+echo "The app has launched, open $demo_app_link:8080 to access the demo app." > adress_ip.txt
