@@ -16,11 +16,6 @@ spec:
         tolerationSeconds: 30
       containers:
         - name: spark
-          resources:
-            limits:
-              cpu: 0.1
-            requests:
-              cpu: 0.1
           image: kammahm/sdtd_data_processing:latest
           command: [
             "/bin/sh",
@@ -35,6 +30,7 @@ spec:
             --conf spark.kubernetes.driver.job.backofflimit=5 \
             --conf spark.kubernetes.container.image=kammahm/sdtd_data_processing:latest \
             --conf spark.kubernetes.container.image.pullPolicy=Always \
+            --conf spark.kubernetes.submission.waitAppCompletion=False \
             --conf spark.executor.instances=2 \
             --conf spark.executor.cores=1 \
             --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
