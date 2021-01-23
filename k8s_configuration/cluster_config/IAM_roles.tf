@@ -1,9 +1,3 @@
-# Configure the AWS Provider
-provider "aws" {
-  profile = "default"
-  region = "us-east-1"
-}
-
 # Master Role
 resource "aws_iam_role" "SDTD_master_role" {
   name = "k8s-cluster-iam-master-role"
@@ -22,7 +16,10 @@ resource "aws_iam_role_policy_attachment" "test-attach-master" {
   policy_arn = aws_iam_policy.SDTD_master_policy.arn
 }
 
-
+resource "aws_iam_instance_profile" "master_profile" {
+  name = "k8s-cluster-iam-master-profile"
+  role = aws_iam_role.SDTD_master_role.name
+}
 # Worker Role
 resource "aws_iam_role" "SDTD_worker_role" {
   name = "k8s-cluster-iam-worker-role"
@@ -39,4 +36,9 @@ resource "aws_iam_policy" "SDTD_worker_policy" {
 resource "aws_iam_role_policy_attachment" "test-attach-worker" {
   role       = aws_iam_role.SDTD_worker_role.name
   policy_arn = aws_iam_policy.SDTD_worker_policy.arn
+}
+
+resource "aws_iam_instance_profile" "worker_profile" {
+  name = "k8s-cluster-iam-worker-profile"
+  role = aws_iam_role.SDTD_worker_role.name
 }

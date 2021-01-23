@@ -46,7 +46,7 @@ resource "aws_instance" "master" {
   key_name      = "id_rsa_sdtd"
   security_groups = [aws_security_group.SDTD_VPC_Security_Group.id]
   subnet_id = aws_subnet.SDTD_VPC_Subnet.id
-  iam_instance_profile = "k8s-cluster-iam-master-role"
+  iam_instance_profile = "k8s-cluster-iam-master-profile"
   #user_data = file("./master_config.sh")
   tags = {
      Name = "k8s-master-ec2-sdtd"
@@ -100,7 +100,7 @@ resource "aws_instance" "workers" {
   key_name      = "id_rsa_sdtd"
   security_groups = [aws_security_group.SDTD_VPC_Security_Group.id]
   subnet_id = aws_subnet.SDTD_VPC_Subnet.id
-  iam_instance_profile = "k8s-cluster-iam-worker-role"
+  iam_instance_profile = "k8s-cluster-iam-worker-profile"
   #user_data = file("./workers_config.sh")
 
   tags = {
@@ -133,7 +133,7 @@ resource "aws_instance" "workers" {
   cat ~/node_sdtd.yml
   sudo kubeadm join --config ~/node_sdtd.yml
   cd k8s_configuration/
-  chmid +x gremlin_config.sh
+  chmod +x gremlin_config.sh
   ./gremlin_config.sh
   EOF
 }
