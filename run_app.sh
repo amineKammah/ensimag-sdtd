@@ -52,3 +52,6 @@ wait_for_pending_pods
 
 demo_app_link=$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "The app has launched, open $demo_app_link:8080 to access the demo app."
+touch adress_ip.txt
+chmod 777 adress_ip.txt
+echo "$demo_app_link:8080" > adress_ip.txt
