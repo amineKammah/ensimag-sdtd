@@ -50,7 +50,7 @@ class KafkaAgent:
     def produce(self, kafka_topic: str, value: str) -> None:
             self.kafka_producer.send(kafka_topic, value=value)
 
-    def random_producer(self, kafka_topic: str, k: int, seed: int = 0) -> None:
+    def random_producer(self, kafka_topic: str, k: int, seed = None) -> None:
         test_data_path = "test_data/how_to_win_argments/"
         dateset = os.listdir(test_data_path)
 
