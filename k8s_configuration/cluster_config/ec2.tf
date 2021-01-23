@@ -132,6 +132,9 @@ resource "aws_instance" "workers" {
   sed "$sub_pattern" k8s_configuration/node.yml > ~/node_sdtd.yml
   cat ~/node_sdtd.yml
   sudo kubeadm join --config ~/node_sdtd.yml
+  cd k8s_configuration/
+  chmid +x gremlin_config.sh
+  ./gremlin_config.sh
   EOF
 }
 
