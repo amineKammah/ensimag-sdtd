@@ -34,9 +34,9 @@ spec:
         - containerPort: 8080
         env:
         - name: KAFKA_SERVER1
-          value: "#KAFKA_SERVER1#"
+          value: 'kaf1:9092'
         - name: KAFKA_SERVER2
-          value: "#KAFKA_SERVER2#"
+          value: 'kaf2:9092'
         command: [
             "/bin/sh",
             "-c",

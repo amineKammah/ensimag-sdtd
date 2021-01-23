@@ -1,44 +1,54 @@
+function wait_for_pending_pods {
+  echo "waiting for pending pods to start..."
+  sleep 1
+  while test -n "$(kubectl get pods --all-namespaces --field-selector=status.phase=ContainerCreating -o name)"; do
+    sleep 3;
+  done
+
+  while test -n "$(kubectl get pods --all-namespaces --field-selector=status.phase=Pending -o name)"; do
+    sleep 3;
+  done
+}
+
+function wait_for_external_ip_address {
+  echo "waiting for external loadbalancer to be assigned..."
+  sleep 1
+  while test -z "$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')"; do
+    sleep 3;
+  done
+}
+
 # Run Zookeeper and Kafka Service
 kubectl create -f messaging_agent/yaml_files/zookeeper-service.yaml
 kubectl create -f messaging_agent/yaml_files/zookeeper-cluster.yaml
 kubectl create -f messaging_agent/yaml_files/kafka-service.yaml
 
+
+# Prepare yaml file for kafka deployment
+kubectl create -f messaging_agent/yaml_files/kafka-cluster.yaml
+
+wait_for_pending_pods
+
+# Create spark service account
+kubectl apply -f data_processing/yaml_files/spark-rbac.yaml
+
+# Prepare yaml file for spark-job
 # Getting service IP
 K8S_MASTER=$(
   kubectl get node --selector=node-role.kubernetes.io/master \
   -o jsonpath='{$.items[*].status.addresses[?(@.type=="InternalIP")].address}'
 )
-KAFKA_SERVER1=$(kubectl describe services kaf1 | grep IP: | awk '{print $2;}')
-KAFKA_SERVER2=$(kubectl describe services kaf2 | grep IP: | awk '{print $2;}')
-ZK_SERVER1=$(kubectl describe services zoo1 | grep IP: | awk '{print $2;}')
-ZK_SERVER2=$(kubectl describe services zoo2 | grep IP: | awk '{print $2;}')
-echo "Kafka servers IP: $KAFKA_SERVER1, $KAFKA_SERVER2."
-echo "Zookeeper servers IP: $ZK_SERVER1, $ZK_SERVER2."
-echo "Kubernetes master IP: $K8S_MASTER."
-
-# Prepare yaml file for kafka deployment
-sub_pattern="s/#KAFKA_SERVER1#/$KAFKA_SERVER1/;s/#KAFKA_SERVER2#/$KAFKA_SERVER2/"
-sed "$sub_pattern" messaging_agent/yaml_files/kafka-cluster.yaml > /tmp/kafka-cluster.yaml
-
-kubectl create -f /tmp/kafka-cluster.yaml
-
-sleep 2
-# Create spark service account
-kubectl apply -f data_processing/yaml_files/spark-rbac.yaml
-
-# Prepare yaml file for spark-job
-sub_pattern="s/#KAFKA_SERVER1#/$KAFKA_SERVER1/;s/#KAFKA_SERVER2#/$KAFKA_SERVER2/;
-             s/#ZK_SERVER1#/$ZK_SERVER1/;s/#ZK_SERVER2#/$ZK_SERVER2/;
-             s/#K8S_MASTER#/$K8S_MASTER/"
+sub_pattern="s/#K8S_MASTER#/$K8S_MASTER/"
 sed "$sub_pattern" data_processing/yaml_files/spark-job.yaml > /tmp/spark-job.yaml
 kubectl create -f /tmp/spark-job.yaml
 
-sleep 2
-# Run Demo app
-sub_pattern="s/#KAFKA_SERVER1#/$KAFKA_SERVER1/;s/#KAFKA_SERVER2#/$KAFKA_SERVER2/"
-sed "$sub_pattern" demo_app/yaml_files/flask-deployment.yaml > /tmp/flask-deployment.yaml
-kubectl create -f /tmp/flask-deployment.yaml
+wait_for_pending_pods
 
-sleep 5
+# Run Demo app
+kubectl create -f demo_app/yaml_files/flask-deployment.yaml
+
+wait_for_pending_pods
+# wait_for_external_ip_address
+
 demo_app_link=$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "The app has launched, open $demo_app_link:8080 to access the demo app."

@@ -22,7 +22,7 @@ spec:
         - name: KAFKA_ADVERTISED_PORT
           value: "9092"
         - name: KAFKA_ADVERTISED_HOST_NAME
-          value: '#KAFKA_SERVER1#'
+          value: 'kaf1'
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zoo1:2181,zoo2:2181
 ---
@@ -50,6 +50,6 @@ spec:
         - name: KAFKA_ADVERTISED_PORT
           value: "9092"
         - name: KAFKA_ADVERTISED_HOST_NAME
-          value: '#KAFKA_SERVER2#'
+          value: 'kaf2'
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zoo1:2181,zoo2:2181
