@@ -30,6 +30,7 @@ kubectl create -f messaging_agent/yaml_files/kafka-cluster.yaml
 wait_for_pending_pods
 
 # Create spark
+helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
 helm install spark spark-operator/spark-operator --namespace default
 kubectl apply -f data_processing/yaml_files/spark_helm.yaml
 
