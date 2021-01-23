@@ -31,7 +31,8 @@ wait_for_pending_pods
 
 # Create spark service account
 kubectl apply -f data_processing/yaml_files/spark-rbac.yaml
-
+kubectl apply -f data_processing/yaml_files/storage_class.yaml
+kubectl apply -f data_processing/yaml_files/spark-pvc.yaml
 # Prepare yaml file for spark-job
 # Getting service IP
 K8S_MASTER=$(
