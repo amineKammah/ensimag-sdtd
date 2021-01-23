@@ -53,7 +53,7 @@ spec:
   template:
     metadata:
       labels:
-        app: kafka2
+        app: kafka2 
     spec:
       tolerations:
       - key: "node.kubernetes.io/unreachable"
