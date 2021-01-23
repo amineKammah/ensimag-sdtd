@@ -26,6 +26,15 @@ spec:
       labels:
         app: demo-app
     spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
       containers:
       - name: demo-app
         image: kammahm/sdtd_data_processing:latest

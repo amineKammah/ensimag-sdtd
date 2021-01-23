@@ -1,12 +1,13 @@
 
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: zookeeper1
 spec:
   replicas: 1
   selector:
-    app: zookeeper1
+    matchLabels:
+      app: zookeeper1
   template:
     metadata:
       labels:
@@ -27,14 +28,15 @@ spec:
         - name: ZOOKEEPER_SERVER_2
           value: zoo2
 ---
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: zookeeper2
 spec:
   replicas: 1
   selector:
-    app: zookeeper2
+    matchLabels:
+      app: zookeeper2
   template:
     metadata:
       labels:
