@@ -29,19 +29,9 @@ kubectl create -f messaging_agent/yaml_files/kafka-cluster.yaml
 
 wait_for_pending_pods
 
-# Create spark service account
-kubectl apply -f data_processing/yaml_files/spark-rbac.yaml
-kubectl apply -f data_processing/yaml_files/storage_class.yaml
-kubectl apply -f data_processing/yaml_files/spark-pvc.yaml
-# Prepare yaml file for spark-job
-# Getting service IP
-K8S_MASTER=$(
-  kubectl get node --selector=node-role.kubernetes.io/master \
-  -o jsonpath='{$.items[*].status.addresses[?(@.type=="InternalIP")].address}'
-)
-sub_pattern="s/#K8S_MASTER#/$K8S_MASTER/"
-sed "$sub_pattern" data_processing/yaml_files/spark-job.yaml > /tmp/spark-job.yaml
-kubectl create -f /tmp/spark-job.yaml
+# Create spark
+helm install spark spark-operator/spark-operator --namespace default
+kubectl apply -f data_processing/yaml_files/spark_helm.yaml
 
 wait_for_pending_pods
 
