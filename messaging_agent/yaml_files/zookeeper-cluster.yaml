@@ -15,6 +15,11 @@ spec:
     spec:
       containers:
       - name: zookeeper1
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         image: digitalwonderland/zookeeper
         ports:
         - containerPort: 2181
@@ -44,6 +49,11 @@ spec:
     spec:
       containers:
       - name: zookeeper2
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         image: digitalwonderland/zookeeper
         ports:
         - containerPort: 2181

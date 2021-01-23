@@ -24,6 +24,11 @@ spec:
       containers:
       - name: kafka1
         image: wurstmeister/kafka
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         ports:
         - containerPort: 9092
         env:
@@ -61,6 +66,11 @@ spec:
         tolerationSeconds: 30
       containers:
       - name: kafka2
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         image: wurstmeister/kafka
         ports:
         - containerPort: 9092
