@@ -6,14 +6,14 @@ networking:
   podSubnet: "10.244.0.0/16"
 apiServer:
   extraArgs:
-    default-not-ready-toleration-seconds: 30 # default 300
-    default-unreachable-toleration-seconds: 30 #default  300
+    default-not-ready-toleration-seconds: "30"
+    default-unreachable-toleration-seconds: "30" 
     cloud-provider: "aws"
 controllerManager:
   extraArgs:
-    node-monitor-grace-period: 16s #default 40s
-    node-monitor-period: 2s #default 5s
-    pod-eviction-timeout: 30s #default 5m0s
+    node-monitor-grace-period: "16s" 
+    node-monitor-period: "2s"
+    pod-eviction-timeout: "30s"
     cloud-provider: "aws"
 ---
 apiVersion: kubeadm.k8s.io/v1beta2
