@@ -1,19 +1,34 @@
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: kafka1
 spec:
   replicas: 1
   selector:
-    app: kafka1
+    matchLabels:
+      app: kafka1
   template:
     metadata:
       labels:
         app: kafka1
     spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
       containers:
       - name: kafka1
         image: wurstmeister/kafka
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         ports:
         - containerPort: 9092
         env:
@@ -22,25 +37,40 @@ spec:
         - name: KAFKA_ADVERTISED_PORT
           value: "9092"
         - name: KAFKA_ADVERTISED_HOST_NAME
-          value: '#KAFKA_SERVER1#'
+          value: 'kaf1'
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zoo1:2181,zoo2:2181
 ---
-apiVersion: v1
-kind: ReplicationController
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: kafka2
 spec:
   replicas: 1
   selector:
-    app: kafka2
+    matchLabels:
+      app: kafka2
   template:
     metadata:
       labels:
         app: kafka2
     spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
       containers:
       - name: kafka2
+        resources:
+          limits:
+            cpu: 0.5
+          requests:
+            cpu: 0.5
         image: wurstmeister/kafka
         ports:
         - containerPort: 9092
@@ -50,6 +80,6 @@ spec:
         - name: KAFKA_ADVERTISED_PORT
           value: "9092"
         - name: KAFKA_ADVERTISED_HOST_NAME
-          value: '#KAFKA_SERVER2#'
+          value: 'kaf2'
         - name: KAFKA_ZOOKEEPER_CONNECT
           value: zoo1:2181,zoo2:2181

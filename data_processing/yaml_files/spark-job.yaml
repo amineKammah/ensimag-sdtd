@@ -5,8 +5,22 @@ metadata:
 spec:
   template:
     spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
       containers:
         - name: spark
+          resources:
+            limits:
+              cpu: 0.1
+            requests:
+              cpu: 0.1
           image: kammahm/sdtd_data_processing:latest
           command: [
             "/bin/sh",
@@ -15,15 +29,19 @@ spec:
              --master k8s://https://#K8S_MASTER#:6443 \
             --deploy-mode cluster \
             --name data_processing \
+            --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.checkpointpvc.mount.path=/checkpoint \
+            --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.checkpointpvc.mount.readOnly=false \
+            --conf spark.kubernetes.driver.volumes.persistentVolumeClaim.checkpointpvc.options.claimName=spark-pvc-claim \
+            --conf spark.kubernetes.driver.job.backofflimit=5 \
             --conf spark.kubernetes.container.image=kammahm/sdtd_data_processing:latest \
             --conf spark.kubernetes.container.image.pullPolicy=Always \
             --conf spark.executor.instances=2 \
             --conf spark.executor.cores=1 \
             --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
-            --conf spark.kubernetes.driverEnv.KAFKA_SERVER1='#KAFKA_SERVER1#:9092' \
-            --conf spark.kubernetes.driverEnv.KAFKA_SERVER2='#KAFKA_SERVER2#:9092' \
-            --conf spark.kubernetes.driverEnv.ZK_SERVER1='#ZK_SERVER1#:2181' \
-            --conf spark.kubernetes.driverEnv.ZK_SERVER2='#ZK_SERVER2#:2181' \
+            --conf spark.kubernetes.driverEnv.KAFKA_SERVER1='kaf1:9092' \
+            --conf spark.kubernetes.driverEnv.KAFKA_SERVER2='kaf2:9092' \
+            --conf spark.kubernetes.driverEnv.ZK_SERVER1='zoo1:2181' \
+            --conf spark.kubernetes.driverEnv.ZK_SERVER2='zoo2:2181' \
             --conf spark.kubernetes.driverEnv.K8S_MASTER='#K8S_MASTER#' \
             --conf spark.scheduler.mode='FAIR' \
             --conf spark.streaming.concurrentjobs=6 \
@@ -32,5 +50,6 @@ spec:
             local:///ensimag-sdtd/run_ocr_service.py "
           ]
       serviceAccountName: spark
-      restartPolicy: Never
+      restartPolicy: OnFailure
+      
   backoffLimit: 4
