@@ -44,13 +44,14 @@ kubectl create -f demo_app/yaml_files/flask-deployment.yaml
 wait_for_pending_pods
 
 # Adding auto-scalers
+kubectl apply -f  utils/metrics_server.yaml
 kubectl autoscale deployment.apps/demo-app --min=1 --max=3 --cpu-percent=80
 kubectl autoscale deployment.apps/kafka1 --min=1 --max=3 --cpu-percent=80
 kubectl autoscale deployment.apps/kafka2 --min=1 --max=3 --cpu-percent=80
 kubectl autoscale deployment.apps/zookeeper1 --min=1 --max=3 --cpu-percent=80
 kubectl autoscale deployment.apps/zookeeper2 --min=1 --max=3 --cpu-percent=80
 
-# wait_for_external_ip_address
+wait_for_external_ip_address
 
 demo_app_link=$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')
 echo "Open $demo_app_link:8080 to access the demo app, you may want to give it a minute to make sure everything has already started"

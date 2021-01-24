@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: demo-app-service
 spec:
-  # type: "LoadBalancer"
+  type: "LoadBalancer"
   selector:
     app: demo-app
   ports:
@@ -37,6 +37,11 @@ spec:
         tolerationSeconds: 30
       containers:
       - name: demo-app
+        resources:
+          limits:
+            cpu: 1
+          requests:
+            cpu: 1
         image: kammahm/sdtd_data_processing:latest
         imagePullPolicy: Always
         ports:
