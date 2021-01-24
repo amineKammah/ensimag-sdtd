@@ -29,6 +29,8 @@ kubectl create -f messaging_agent/yaml_files/kafka-cluster.yaml
 
 wait_for_pending_pods
 
+sleep 10
+
 # Create spark
 helm repo add spark-operator https://googlecloudplatform.github.io/spark-on-k8s-operator
 helm install spark spark-operator/spark-operator --namespace default
@@ -40,6 +42,14 @@ wait_for_pending_pods
 kubectl create -f demo_app/yaml_files/flask-deployment.yaml
 
 wait_for_pending_pods
+
+# Adding auto-scalers
+kubectl autoscale deployment.apps/demo-app --min=1 --max=3 --cpu-percent=80
+kubectl autoscale deployment.apps/kafka1 --min=1 --max=3 --cpu-percent=80
+kubectl autoscale deployment.apps/kafka2 --min=1 --max=3 --cpu-percent=80
+kubectl autoscale deployment.apps/zookeeper1 --min=1 --max=3 --cpu-percent=80
+kubectl autoscale deployment.apps/zookeeper2 --min=1 --max=3 --cpu-percent=80
+
 # wait_for_external_ip_address
 
 demo_app_link=$(kubectl get service/demo-app-service --output jsonpath='{.status.loadBalancer.ingress[0].hostname}')
