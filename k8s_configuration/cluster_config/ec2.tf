@@ -65,7 +65,7 @@ resource "aws_instance" "master" {
   # Configure hostname
   varHost=$( curl http://169.254.169.254/latest/meta-data/local-hostname)
   hostnamectl set-hostname $varHost
-  git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
+  git clone https://github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
   #k8s_configuration/aws.yml
   cd ~/ensimag-sdtd
   varMasterIp=$(hostname -I)
@@ -74,11 +74,7 @@ resource "aws_instance" "master" {
   sed "$sub_pattern" k8s_configuration/aws.yml > ~/aws_sdtd.yml
   cat ~/aws_sdtd.yml
   export HOME=/root
-  curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
-  sudo apt-get install apt-transport-https --yes
-  echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-  sudo apt-get update
-  sudo apt-get install helm
+  #kubeadm init --config ~/aws_sdtd.yml --v=5 --ignore-preflight-errors="ERROR SystemVerification"
   kubeadm init --config ~/aws_sdtd.yml
   # Prepare kubeconfig file for download to local machine
   mkdir -p /root/.kube
@@ -129,13 +125,16 @@ resource "aws_instance" "workers" {
   sudo hostnamectl set-hostname $varHost
   # Run kubeadm
   sleep 10
-  git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
+  git clone https://github.com/amineKammah/ensimag-sdtd.git ~/ensimag-sdtd
   #k8s_configuration/aws.yml
   cd ~/ensimag-sdtd
   sub_pattern="s/#TOKEN#/${local.token}/;s/#MASTER_IP#/${aws_instance.master.private_ip}/;s/#HOSTNAME#/$varHost/"
   sed "$sub_pattern" k8s_configuration/node.yml > ~/node_sdtd.yml
   cat ~/node_sdtd.yml
   sudo kubeadm join --config ~/node_sdtd.yml
+  cd k8s_configuration/
+  chmod +x gremlin_config.sh
+  ./gremlin_config.sh
   EOF
 }
 

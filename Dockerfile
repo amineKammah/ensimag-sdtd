@@ -31,7 +31,7 @@ RUN apt install -y tesseract-ocr libtesseract-dev git vim && \
     # Removed the .cache to save space
     rm -r /root/.cache && rm -rf /var/cache/apt/*
 
-RUN git clone https://amineKammah:95ec4f4005cfccdd0dfa2779a2f9c0861f104d94@github.com/amineKammah/ensimag-sdtd.git /ensimag-sdtd
+RUN git clone https://github.com/amineKammah/ensimag-sdtd.git /ensimag-sdtd
 
 RUN cd $SPARK_HOME && \
     wget https://repo1.maven.org/maven2/org/apache/spark/spark-streaming-kafka-0-8-assembly_2.11/2.4.4/spark-streaming-kafka-0-8-assembly_2.11-2.4.4.jar && \
