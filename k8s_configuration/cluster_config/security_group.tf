@@ -26,3 +26,4 @@ resource "aws_security_group" "SDTD_VPC_Security_Group" {
    Name = "k8s-cluster-sg-sdtd"
 }
 } # end resource
+
