@@ -1,10 +1,16 @@
-# Master Role
+#----------------------------------------------------------------------#
+# Configure the Master Role
+#----------------------------------------------------------------------#
+
 resource "aws_iam_role" "SDTD_master_role" {
   name = "k8s-cluster-iam-master-role"
 
   assume_role_policy = file("json_config/master_role_policy.json")
 }
-# Master Policy
+#----------------------------------------------------------------------#
+# Configure the Master Policy
+#----------------------------------------------------------------------#
+
 resource "aws_iam_policy" "SDTD_master_policy" {
   name        = "k8s-cluster-iam-master-policy"
 
@@ -20,13 +26,20 @@ resource "aws_iam_instance_profile" "master_profile" {
   name = "k8s-cluster-iam-master-profile"
   role = aws_iam_role.SDTD_master_role.name
 }
-# Worker Role
+#----------------------------------------------------------------------#
+# Configure the Worker Role
+#----------------------------------------------------------------------#
+
 resource "aws_iam_role" "SDTD_worker_role" {
   name = "k8s-cluster-iam-worker-role"
 
   assume_role_policy = file("json_config/worker_role_policy.json")
 }
-# Worker Policy
+
+#----------------------------------------------------------------------#
+# Configure the Worker Policy
+#----------------------------------------------------------------------#
+
 resource "aws_iam_policy" "SDTD_worker_policy" {
   name        = "k8s-cluster-iam-worker-policy"
 

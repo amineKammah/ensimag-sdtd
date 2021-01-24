@@ -1,4 +1,5 @@
 data_processing/__pycache__/
 data_processing/notebooks/.ipynb_checkpoints/
 k8s_configuration/cluster_config/.terraform
-k8s_configuration/IAM_config/.terraform
+k8s_configuration/cluster_config/terraform.tfstate
+k8s_configuration/cluster_config/terraform.tfstate.backup

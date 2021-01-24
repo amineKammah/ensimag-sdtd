@@ -39,7 +39,10 @@ locals {
 #----------------------------------------------------------------------#
 
 
-# Create the master
+#----------------------------------------------------------------------#
+# Configure the Master node
+#----------------------------------------------------------------------#
+
 resource "aws_instance" "master" {
   ami           = lookup(var.amis, var.region)
   instance_type = var.master_instance_type
@@ -47,7 +50,6 @@ resource "aws_instance" "master" {
   security_groups = [aws_security_group.SDTD_VPC_Security_Group.id]
   subnet_id = aws_subnet.SDTD_VPC_Subnet.id
   iam_instance_profile = "k8s-cluster-iam-master-profile"
-  #user_data = file("./master_config.sh")
   tags = {
      Name = "k8s-master-ec2-sdtd"
      "kubernetes.io/cluster/kubernetes" = "owned"
@@ -91,7 +93,10 @@ resource "aws_instance" "master" {
 }
 
 
-# Configure Workers
+#----------------------------------------------------------------------#
+# Configure the Worker nodes
+#----------------------------------------------------------------------#
+
 
 resource "aws_instance" "workers" {
   count         = var.num_workers
@@ -101,7 +106,6 @@ resource "aws_instance" "workers" {
   security_groups = [aws_security_group.SDTD_VPC_Security_Group.id]
   subnet_id = aws_subnet.SDTD_VPC_Subnet.id
   iam_instance_profile = "k8s-cluster-iam-worker-profile"
-  #user_data = file("./workers_config.sh")
 
   tags = {
      Name = "k8s-worker-${count.index}-sdtd"
@@ -118,8 +122,6 @@ resource "aws_instance" "workers" {
   sudo apt update
   sudo apt install -y docker-ce kubelet kubeadm kubectl
   export HOME=/root
-  echo "hello"
-  echo $HOME
   # Configure hostname
   varHost=$(sudo curl http://169.254.169.254/latest/meta-data/local-hostname)
   sudo hostnamectl set-hostname $varHost
@@ -138,11 +140,13 @@ resource "aws_instance" "workers" {
   EOF
 }
 
+#----------------------------------------------------------------------#
+# Configure the aws key pair
+#----------------------------------------------------------------------#
 
-# to use if the aws key pai doesn't exist
 # aws_key_pair
 resource "aws_key_pair" "deployer" {
   key_name   = "id_rsa_sdtd"
   public_key = file(var.public_key_file)
 }
- #---------------------------------------------------------------------------
+#---------------------------------------------------------------------------
