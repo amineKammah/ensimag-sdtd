@@ -76,7 +76,12 @@ resource "aws_instance" "master" {
   sed "$sub_pattern" k8s_configuration/aws.yml > ~/aws_sdtd.yml
   cat ~/aws_sdtd.yml
   export HOME=/root
-  #kubeadm init --config ~/aws_sdtd.yml --v=5 --ignore-preflight-errors="ERROR SystemVerification"
+  #install helm
+  curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+  sudo apt-get install apt-transport-https --yes
+  echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+  sudo apt-get update
+  sudo apt-get install helm
   kubeadm init --config ~/aws_sdtd.yml
   # Prepare kubeconfig file for download to local machine
   mkdir -p /root/.kube
