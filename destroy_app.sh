@@ -7,4 +7,4 @@ kubectl delete --all pvc --force
 kubectl delete --all sparkapplication --force
 kubectl delete --all hpa --force
 helm delete spark
-rm adress_ip
+rm adress_ip.txt
