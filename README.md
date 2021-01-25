@@ -26,7 +26,7 @@ terraform apply -auto-approve
 ```
  - The link to our application is in "ensimag-sdtd/adress_ip.txt", copy and paste the link in the browser to test the application
 ```bash
-   cat ansimag-sdtd/adress_ip.txt
+   cat ensimag-sdtd/adress_ip.txt
 ```
 
  ### If you want to delete resources:
